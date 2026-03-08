@@ -2,7 +2,7 @@
 
 int main()
 {
-	std::cout << "This is the first commit";
-	std::cout << "This is the second commit";
+	std::cout << "This is the third commit";
+	std::cout << "This is the forth commit";
 	return 0;
 }
