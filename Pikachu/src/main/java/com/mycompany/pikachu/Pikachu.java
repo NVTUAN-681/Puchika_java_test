@@ -4,7 +4,11 @@
 
 package com.mycompany.pikachu;
 
+import com.mycompany.pikachu.Module.Algorithm.ClassicAlgorithm;
+import com.mycompany.pikachu.Module.Algorithm.IAlgorithm;
+
 import com.mycompany.pikachu.Module.Model.Board;
+import com.mycompany.pikachu.Module.Model.Cell;
 import java.util.Scanner;
 
 /**
@@ -14,27 +18,27 @@ import java.util.Scanner;
 public class Pikachu {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-        Board b = new Board(6, 5);        
-        b.initBoard(6, 5);
-        System.out.println("Hello World!");
-        for (int i = 1; i <= 6; i++) {
-            for (int j = 1; j <= 5; j++) {
-                System.out.print(b.getCell(i, j).getId() + " ");
-            }
-            System.out.print("\n");
-        }
-        
-        
+        //System.out.println("Hello World!");
+        Board b = new Board(2, 1);
+        IAlgorithm a = new ClassicAlgorithm();
+        b.initBoard(2, 1, a);
+        //System.out.println("Hello World!");
         Scanner sc = new Scanner(System.in);
-        int temp = sc.nextInt();
-        if(temp == 1)
-            b.shuffle();
-        for (int i = 1; i <= 6; i++) {
-            for (int j = 1; j <= 5; j++) {
-                System.out.print(b.getCell(i, j).getId() + " ");
+        int x1, y1, x2, y2;
+        
+        do {
+            b.print();
+            x1 = sc.nextInt();
+            y1 = sc.nextInt();
+            x2 = sc.nextInt();
+            y2 = sc.nextInt();
+            if (a.checkPath(b, b.getCell(x1, y1), b.getCell(x2, y2))) {
+                a.removePair(b.getCell(x1, y1), b.getCell(x2, y2), b);
             }
-            System.out.print("\n");
-        }    
+            if (b.getTotalCells() > 0 && a.hasAnyMatch(b) == false) {
+                a.shuffle(b);
+            }
+        } while (b.getTotalCells() > 0);
+        System.out.println("The end!");
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author Admin
  */
-public interface IArgorithm {
+public interface IAlgorithm {
 
     /**
      *
@@ -23,7 +23,9 @@ public interface IArgorithm {
      * @return
      */
     public boolean checkPath (Board board, Cell c1, Cell c2);
-    public List<Point> getPath (Board board, Cell c1, Cell c2);
+    public List<Point> getPath ();
     public boolean hasAnyMatch (Board board);
     public CellPair findHint (Board board);
+    public void shuffle(Board board);
+    public void removePair(Cell c1, Cell c2, Board board);
 }
