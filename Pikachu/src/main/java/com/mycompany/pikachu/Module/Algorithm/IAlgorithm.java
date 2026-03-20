@@ -9,6 +9,7 @@ import com.mycompany.pikachu.Module.Model.Cell;
 import com.mycompany.pikachu.Module.Model.CellPair;
 import java.awt.Point;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -22,6 +23,7 @@ public interface IAlgorithm {
      * @param c2
      * @return
      */
+    Map<Integer, List<Cell>> getMap();
     public boolean checkPath (Board board, Cell c1, Cell c2);
     public List<Point> getPath ();
     public boolean hasAnyMatch (Board board);

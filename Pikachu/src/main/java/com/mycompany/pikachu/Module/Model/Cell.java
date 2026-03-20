@@ -49,6 +49,15 @@ public class Cell {
     public void setId(int id) {
         this.id = id;
     }
+    
+//    public void setId(int id) {
+//        System.out.println("setId called on (" + this.x + "," + this.y + ") from " + this.id + " to " + id);
+//        Thread.currentThread().getStackTrace();
+//        for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+//            System.out.println(e);
+//        }
+//        this.id = id;
+//    }
 
     public void setStatus(boolean status) {
         this.status = status;
