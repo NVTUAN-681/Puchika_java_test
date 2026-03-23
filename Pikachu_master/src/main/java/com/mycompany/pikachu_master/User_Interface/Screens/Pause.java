@@ -5,25 +5,29 @@
 package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
-import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
-
+import com.mycompany.pikachu_master.Controller.PlayScreen;
+import com.mycompany.pikachu_master.User_Interface.Components.BackgroundPause;
 
 /**
  *
  * @author laptop
  */
 public class Pause extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Pause.class.getName());
 
     /**
-     * Creates new form Pause
+     * Creates new form setting
      */
-    public Pause() {
-        setContentPane(new BackgroundMain());
+    
+    MainScreen main;
+    
+    public Pause(MainScreen main) {
+        setContentPane(new BackgroundPause());
         initComponents();
+        this.main = main;
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,30 +36,150 @@ public class Pause extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        exitButton5 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        nextButton = new javax.swing.JButton();
+        newButton = new javax.swing.JButton();
+        instructionButton1 = new javax.swing.JButton();
+        exitmenuButton = new javax.swing.JButton();
+        volumnButton = new javax.swing.JToggleButton();
+        soundButton = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        exitButton5.setText("<");
-        exitButton5.addActionListener(this::exitButton5ActionPerformed);
-        getContentPane().add(exitButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 57, 31));
+        nextButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        nextButton.setText("CHƠI TIẾP");
+        nextButton.setPreferredSize(new java.awt.Dimension(250, 40));
+        nextButton.addActionListener(this::nextButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 150;
+        gridBagConstraints.ipady = 13;
+        gridBagConstraints.insets = new java.awt.Insets(100, 26, 0, 24);
+        getContentPane().add(nextButton, gridBagConstraints);
 
-        jLabel1.setPreferredSize(new java.awt.Dimension(800, 600));
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        newButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        newButton.setText("VÁN MỚI");
+        newButton.setPreferredSize(new java.awt.Dimension(250, 40));
+        newButton.addActionListener(this::newButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 155;
+        gridBagConstraints.ipady = 13;
+        gridBagConstraints.insets = new java.awt.Insets(0, 26, 0, 24);
+        getContentPane().add(newButton, gridBagConstraints);
 
-        pack();
+        instructionButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        instructionButton1.setText("HƯỚNG DẪN");
+        instructionButton1.setPreferredSize(new java.awt.Dimension(250, 40));
+        instructionButton1.addActionListener(this::instructionButton1ActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 129;
+        gridBagConstraints.ipady = 13;
+        gridBagConstraints.insets = new java.awt.Insets(0, 26, 0, 24);
+        getContentPane().add(instructionButton1, gridBagConstraints);
+
+        exitmenuButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        exitmenuButton.setText("MÀN HÌNH CHÍNH");
+        exitmenuButton.setPreferredSize(new java.awt.Dimension(250, 40));
+        exitmenuButton.addActionListener(this::exitmenuButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 91;
+        gridBagConstraints.ipady = 13;
+        gridBagConstraints.insets = new java.awt.Insets(0, 26, 0, 24);
+        getContentPane().add(exitmenuButton, gridBagConstraints);
+
+        volumnButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 18)); // NOI18N
+        volumnButton.setText("🎧");
+        volumnButton.setPreferredSize(new java.awt.Dimension(122, 40));
+        volumnButton.setRolloverEnabled(false);
+        volumnButton.addActionListener(this::volumnButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 91;
+        gridBagConstraints.ipady = 12;
+        gridBagConstraints.insets = new java.awt.Insets(6, 3, 94, 24);
+        getContentPane().add(volumnButton, gridBagConstraints);
+
+        soundButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 18)); // NOI18N
+        soundButton.setText("🔊");
+        soundButton.setMaximumSize(new java.awt.Dimension(125, 40));
+        soundButton.setPreferredSize(new java.awt.Dimension(122, 40));
+        soundButton.setRolloverEnabled(false);
+        soundButton.addActionListener(this::soundButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 91;
+        gridBagConstraints.ipady = 12;
+        gridBagConstraints.insets = new java.awt.Insets(6, 26, 94, 3);
+        getContentPane().add(soundButton, gridBagConstraints);
+
+        setSize(new java.awt.Dimension(314, 408));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void exitButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton5ActionPerformed
+    private void volumnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_volumnButtonActionPerformed
         // TODO add your handling code here:
-        GameConfig config = new GameConfig(1, 2, 0);
-        MainScreen Main = new MainScreen(config);
-        Main.setVisible(true);
+        if (volumnButton.isSelected()) {
+            volumnButton.setText("🚫🎧");
+        } else {
+            volumnButton.setText("🎧");
+        }
+    }//GEN-LAST:event_volumnButtonActionPerformed
+
+    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
+        // TODO add your handling code here:    
+        this.setVisible(false);
+    }//GEN-LAST:event_nextButtonActionPerformed
+
+    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+        // TODO add your handling code here:
+        GameConfig config = new GameConfig(6, 5,0);
+        main.resertGame(config);
         this.dispose();
-    }//GEN-LAST:event_exitButton5ActionPerformed
+    }//GEN-LAST:event_newButtonActionPerformed
+
+    private void exitmenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuButtonActionPerformed
+        // TODO add your handling code here:
+        StartScreen pika = new StartScreen();
+        pika.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_exitmenuButtonActionPerformed
+
+    private void instructionButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instructionButton1ActionPerformed
+        // TODO add your handling code here:
+       // HelpScreen instruct = new HelpScreen();
+        //instruct.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_instructionButton1ActionPerformed
+
+    private void soundButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soundButtonActionPerformed
+        // TODO add your handling code here:                                          
+        if (soundButton.isSelected()) {
+            soundButton.setText("🔇");
+        } else {
+            soundButton.setText("🔊");
+        }
+    }//GEN-LAST:event_soundButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,11 +203,15 @@ public class Pause extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Pause().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new Pause().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton exitButton5;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton exitmenuButton;
+    private javax.swing.JButton instructionButton1;
+    private javax.swing.JButton newButton;
+    private javax.swing.JButton nextButton;
+    private javax.swing.JToggleButton soundButton;
+    private javax.swing.JToggleButton volumnButton;
     // End of variables declaration//GEN-END:variables
 }

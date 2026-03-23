@@ -17,9 +17,12 @@ public class HelpScreen extends javax.swing.JFrame {
     /**
      * Creates new form HelpScreen
      */
-    public HelpScreen() {
+    StartScreen start;
+    
+    public HelpScreen(StartScreen start) {
         setContentPane(new BackgroundHelp());
         initComponents();
+        this.start = start;          
     }
 
     /**
@@ -45,13 +48,13 @@ public class HelpScreen extends javax.swing.JFrame {
         exitButton2.addActionListener(this::exitButton2ActionPerformed);
         getContentPane().add(exitButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, 53, 31));
 
-        setBounds(0, 0, 814, 608);
+        setSize(new java.awt.Dimension(814, 608));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton2ActionPerformed
         // TODO add your handling code here:
-        StartScreen pika = new StartScreen();
-        pika.setVisible(true);
+        start.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_exitButton2ActionPerformed
 
@@ -77,7 +80,7 @@ public class HelpScreen extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new HelpScreen().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new HelpScreen().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

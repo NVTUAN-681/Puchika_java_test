@@ -7,6 +7,8 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 import com.mycompany.pikachu_master.Controller.GameConfig;
 import com.mycompany.pikachu_master.Controller.PlayScreen;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
+import com.mycompany.pikachu_master.User_Interface.Components.BackgroundStartScreen;
+import java.awt.event.ComponentEvent;
 
 /**
  *
@@ -18,22 +20,82 @@ public class MainScreen extends javax.swing.JFrame {
 
     /**
      * Creates new form MainScreen
+     *
+     * @param config
      */
+    GameConfig config;
+    PlayScreen gameBoard;
+
     public MainScreen(GameConfig config) {
+        this.config = config;
 //        setContentPane(new BackgroundMain());
 //        initComponents();
-        setContentPane(new BackgroundMain());
-            initComponents();
+        setContentPane(new BackgroundStartScreen());
+        initComponents();
 
-            // Khởi tạo bàn cờ
-            PlayScreen gameBoard = new PlayScreen(config);
+        gameBoard = new PlayScreen(config);
 
-            // SỬA TẠI ĐÂY: Thay vì BorderLayout, hãy dùng AbsoluteConstraints
-            // Tham số: (x, y, width, height) - Điều chỉnh số này để khớp với ảnh nền của em
-            this.getContentPane().add(gameBoard, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 700, 450));
+        // Khởi tạo bàn cờ
+        //gameBoard.setPreferredSize(new java.awt.Dimension(700, 450));
+        // SỬA TẠI ĐÂY: Thay vì BorderLayout, hãy dùng AbsoluteConstraints
+        // Tham số: (x, y, width, height) - Điều chỉnh số này để khớp với ảnh nền của em
+        this.getContentPane().add(gameBoard, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 80, 700, 450));
+        //this.getContentPane().setLayout(new java.awt.GridBagLayout());
+        //this.getContentPane().add(gameBoard);
 
-            this.revalidate();
-            this.repaint();
+        //căn chỉnh vị trí.
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                int screenWidth = getContentPane().getWidth();
+                int screenHeight = getContentPane().getHeight();
+
+                int boardWidth = 700;
+                int boardHeight = 450;
+
+                int newX = (screenWidth - boardWidth) / 2;
+
+                int newY = ((screenHeight - 80) - boardHeight) / 2 + 80;
+
+                if (newX < 0) {
+                    newX = 0;
+                }
+                if (newY < 80) {
+                    newY = 80;
+                }
+
+                getContentPane().add(gameBoard, new org.netbeans.lib.awtextra.AbsoluteConstraints(newX, newY, boardWidth, boardHeight));
+                int topBarX = (screenWidth - topBarPanel.getWidth()) / 2;
+                if (topBarX < 0) {
+                    topBarX = 0;
+                }
+                getContentPane().add(topBarPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(topBarX, 10, topBarPanel.getWidth(), topBarPanel.getHeight()));
+                // --------------------------------------------------
+
+                getContentPane().revalidate();
+            }
+        });
+
+        this.revalidate();
+        this.repaint();
+    }
+
+    // xử lý resert lại game mới.
+    public void resertGame(GameConfig newConfig) {
+        this.config = newConfig;
+
+        int currentX = gameBoard.getX();
+        int currentY = gameBoard.getY();
+
+        //xóa bảng hiện tại.
+        this.getContentPane().remove(gameBoard);
+        // tạo bảng mới.
+        gameBoard = new PlayScreen(config);
+
+        //this.getContentPane().add(gameBoard);
+        this.getContentPane().add(gameBoard, new org.netbeans.lib.awtextra.AbsoluteConstraints(currentX, currentY, 700, 450));
+        this.revalidate();
+        this.repaint();
     }
 
     /**
@@ -44,57 +106,101 @@ public class MainScreen extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        settingmainButton = new javax.swing.JButton();
+        topBarPanel = new javax.swing.JPanel();
+        coin = new javax.swing.JLabel();
         levelLabel = new javax.swing.JLabel();
         level_point = new javax.swing.JLabel();
         PointLabel = new javax.swing.JLabel();
         point = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         Timeline = new javax.swing.JSlider();
         swapButton = new javax.swing.JButton();
         timeButton = new javax.swing.JButton();
         hintButton = new javax.swing.JButton();
-        coin = new javax.swing.JLabel();
         coinLabel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        settingmainButton = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        settingmainButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
-        settingmainButton.setText("⚙");
-        settingmainButton.setAlignmentY(0.0F);
-        settingmainButton.setPreferredSize(new java.awt.Dimension(45, 45));
-        settingmainButton.addActionListener(this::settingmainButtonActionPerformed);
-        getContentPane().add(settingmainButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 10, 40, 30));
+        topBarPanel.setOpaque(false);
+        topBarPanel.setPreferredSize(new java.awt.Dimension(800, 80));
+        topBarPanel.setLayout(new java.awt.GridBagLayout());
+
+        coin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        coin.setText("VÀNG:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 30, 0);
+        topBarPanel.add(coin, gridBagConstraints);
 
         levelLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        levelLabel.setText("CẤP ĐỘ:");
-        getContentPane().add(levelLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 70, 20));
+        levelLabel.setText("CẤP ĐỘ: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 30, 0);
+        topBarPanel.add(levelLabel, gridBagConstraints);
 
         level_point.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         level_point.setText("12");
-        getContentPane().add(level_point, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 10, 50, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 8, 30, 0);
+        topBarPanel.add(level_point, gridBagConstraints);
 
         PointLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         PointLabel.setText("ĐIỂM:");
-        getContentPane().add(PointLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 30, 0);
+        topBarPanel.add(PointLabel, gridBagConstraints);
 
         point.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         point.setText("110");
-        getContentPane().add(point, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, -1, -1));
-        getContentPane().add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 800, 10));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 9, 30, 0);
+        topBarPanel.add(point, gridBagConstraints);
 
         Timeline.setBackground(new java.awt.Color(204, 204, 204));
         Timeline.setToolTipText("");
         Timeline.setPreferredSize(new java.awt.Dimension(200, 30));
-        getContentPane().add(Timeline, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 10, 260, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 204;
+        gridBagConstraints.ipady = -10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 38, 30, 0);
+        topBarPanel.add(Timeline, gridBagConstraints);
 
         swapButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 10)); // NOI18N
         swapButton.setText("🔁");
         swapButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        getContentPane().add(swapButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 10, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 10;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.ipady = 11;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 20, 30, 0);
+        topBarPanel.add(swapButton, gridBagConstraints);
 
         timeButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
         timeButton.setPreferredSize(new java.awt.Dimension(30, 30));
@@ -104,29 +210,75 @@ public class MainScreen extends javax.swing.JFrame {
             }
         });
         timeButton.addActionListener(this::timeButtonActionPerformed);
-        getContentPane().add(timeButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 10, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 9;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipady = 23;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 20, 30, 0);
+        topBarPanel.add(timeButton, gridBagConstraints);
 
         hintButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 16)); // NOI18N
         hintButton.setText("🔍");
         hintButton.setPreferredSize(new java.awt.Dimension(30, 30));
-        getContentPane().add(hintButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 10, -1, -1));
-
-        coin.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        coin.setText("VÀNG:");
-        getContentPane().add(coin, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 10, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 11;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 2;
+        gridBagConstraints.ipady = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 20, 30, 0);
+        topBarPanel.add(hintButton, gridBagConstraints);
 
         coinLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         coinLabel.setText("9999");
-        getContentPane().add(coinLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 10, -1, -1));
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 10, 260, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 30, 0);
+        topBarPanel.add(coinLabel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.ipadx = 260;
+        gridBagConstraints.ipady = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 34, 0, 0);
+        topBarPanel.add(jLabel1, gridBagConstraints);
 
-        setBounds(0, 0, 814, 608);
+        settingmainButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 20)); // NOI18N
+        settingmainButton.setText("⚙");
+        settingmainButton.setAlignmentY(0.0F);
+        settingmainButton.setPreferredSize(new java.awt.Dimension(45, 45));
+        settingmainButton.addActionListener(this::settingmainButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 12;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 7;
+        gridBagConstraints.ipady = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(20, 20, 30, 20);
+        topBarPanel.add(settingmainButton, gridBagConstraints);
+
+        getContentPane().add(topBarPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        jSeparator1.setPreferredSize(new java.awt.Dimension(9999, 3));
+        getContentPane().add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 77, -1, -1));
+
+        setSize(new java.awt.Dimension(814, 608));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void settingmainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingmainButtonActionPerformed
         // TODO add your handling code here:
-        Pause Setting = new Pause();
-        Setting.setVisible(true);
+        //Pause Setting = new Pause();
+        Pause pause = new Pause(this);
+        pause.setVisible(true);
         // this.dispose();
     }//GEN-LAST:event_settingmainButtonActionPerformed
 
@@ -141,7 +293,7 @@ public class MainScreen extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main (String args[]) {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -178,5 +330,6 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JButton settingmainButton;
     private javax.swing.JButton swapButton;
     private javax.swing.JButton timeButton;
+    private javax.swing.JPanel topBarPanel;
     // End of variables declaration//GEN-END:variables
 }

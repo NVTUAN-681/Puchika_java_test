@@ -11,6 +11,7 @@ import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
  *
  * @author laptop
  */
+
 public class StartScreen extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(StartScreen.class.getName());
@@ -22,6 +23,10 @@ public class StartScreen extends javax.swing.JFrame {
 
         setContentPane(new BackgroundMain());
         initComponents();
+    }
+    LevelScreen level;
+    public void setLevel(String level){
+        levelButton.setText("CẤP ĐỘ: " + level);
     }
 
     @SuppressWarnings("unchecked")
@@ -37,7 +42,6 @@ public class StartScreen extends javax.swing.JFrame {
         levelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(800, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         maxButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -118,7 +122,8 @@ public class StartScreen extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(6, 152, 0, 152);
         getContentPane().add(levelButton, gridBagConstraints);
 
-        setBounds(0, 0, 814, 608);
+        setSize(new java.awt.Dimension(814, 608));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
@@ -130,9 +135,9 @@ public class StartScreen extends javax.swing.JFrame {
 
     private void maxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxButtonActionPerformed
         // TODO add your handling code here:
-        HighScoreScreen Max = new HighScoreScreen();
+        HighScoreScreen Max = new HighScoreScreen(this);
         Max.setVisible(true);
-        this.dispose();
+        this.setVisible(false);
     }//GEN-LAST:event_maxButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
@@ -142,20 +147,23 @@ public class StartScreen extends javax.swing.JFrame {
 
     private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingButtonActionPerformed
         // TODO add your handling code here:
+        SettingMenuScreen set = new SettingMenuScreen(this);
+        set.setVisible(true);
+        //this.setVisible(false);
     }//GEN-LAST:event_settingButtonActionPerformed
 
     private void instructionuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instructionuttonActionPerformed
         // TODO add your handling code here:
-        HelpScreen Instruct = new HelpScreen();
+        HelpScreen Instruct = new HelpScreen(this);
         Instruct.setVisible(true);
-        this.dispose();
+        this.setVisible(false);      
     }//GEN-LAST:event_instructionuttonActionPerformed
 
     private void levelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_levelButtonActionPerformed
         // TODO add your handling code here:
-        LevelScreen lev = new LevelScreen();
-        lev.setVisible(true);
-        this.dispose();
+        LevelScreen lev = new LevelScreen(this);
+        lev.setVisible(true);       
+        this.setVisible(false);
     }//GEN-LAST:event_levelButtonActionPerformed
 
     /**
@@ -179,8 +187,9 @@ public class StartScreen extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new StartScreen().setVisible(true));
+    /* Create and display the form */
+    java.awt.EventQueue.invokeLater (
+() -> new StartScreen().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

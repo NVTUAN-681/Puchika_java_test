@@ -33,8 +33,10 @@ public class PlayScreen extends JPanel implements ActionListener {
         algorithm = new ClassicAlgorithm();
         board = new Board(config.GetCols(), config.GetRows()); 
         board.initBoard(algorithm); // Tạo số ngẫu nhiên từ thuật toán chính
-        setLayout(new GridLayout(config.GetRows(), config.GetCols(), config.GetCols(), config.GetCols())); // Ma trận 6 dòng, 5 cột
-        btnMatrix = new ButtonMain[config.GetRows() + 1][config.GetCols() + 1]; // Bao gồm cả viền trống nếu cần
+        setLayout(new GridLayout(config.GetRows(), config.GetCols(), 2, 2)); // Ma trận 6 dòng, 5 cột
+        //this.setLayout(new java.awt.GridLayout(config.GetRows(), config.GetCols(), 2, 2));
+        //this.setLayout(new java.awt.GridBagLayout());
+        btnMatrix = new ButtonMain[config.GetRows() + 2][config.GetCols() + 2]; // Bao gồm cả viền trống nếu cần
 
         for (int i = 1; i <= config.GetRows(); i++) {
             for (int j = 1; j <=  config.GetCols(); j++) {

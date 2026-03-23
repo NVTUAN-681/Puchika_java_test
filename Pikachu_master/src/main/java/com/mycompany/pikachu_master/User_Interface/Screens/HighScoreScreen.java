@@ -17,9 +17,12 @@ public class HighScoreScreen extends javax.swing.JFrame {
     /**
      * Creates new form HighScoreScreen
      */
-    public HighScoreScreen() {
-        setContentPane(new BackgroundMain());
+    
+    StartScreen start;
+    public HighScoreScreen(StartScreen start) {
+        //setContentPane(new BackgroundMain());
         initComponents();
+        this.start = start;
     }
 
     /**
@@ -30,33 +33,59 @@ public class HighScoreScreen extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         exitButton1 = new javax.swing.JButton();
         max_point = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         exitButton1.setText("<");
+        exitButton1.setAutoscrolls(true);
+        exitButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         exitButton1.setPreferredSize(new java.awt.Dimension(50, 30));
         exitButton1.addActionListener(this::exitButton1ActionPerformed);
-        getContentPane().add(exitButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 55, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipadx = 32;
+        gridBagConstraints.ipady = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
+        getContentPane().add(exitButton1, gridBagConstraints);
 
         max_point.setFont(new java.awt.Font("Segoe UI", 1, 50)); // NOI18N
         max_point.setText("9999");
-        getContentPane().add(max_point, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 235, 174, 101));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 59;
+        gridBagConstraints.ipady = 34;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(195, 275, 0, 0);
+        getContentPane().add(max_point, gridBagConstraints);
 
         jLabel1.setPreferredSize(new java.awt.Dimension(800, 600));
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.ipadx = 800;
+        gridBagConstraints.ipady = 600;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        getContentPane().add(jLabel1, gridBagConstraints);
 
-        setBounds(0, 0, 814, 608);
+        setSize(new java.awt.Dimension(814, 608));
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton1ActionPerformed
         // TODO add your handling code here:
-        StartScreen pika = new StartScreen();
-        pika.setVisible(true);
+        start.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_exitButton1ActionPerformed
 
@@ -82,7 +111,7 @@ public class HighScoreScreen extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new HighScoreScreen().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new HighScoreScreen().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
