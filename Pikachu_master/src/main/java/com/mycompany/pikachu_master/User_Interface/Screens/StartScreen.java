@@ -6,6 +6,7 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
+import com.mycompany.pikachu_master.Utils.ImageLoad;
 
 /**
  *
@@ -20,11 +21,13 @@ public class StartScreen extends javax.swing.JFrame {
      * Creates new form StartScreen
      */
     public StartScreen() {
-
         setContentPane(new BackgroundMain());
+        ImageLoad.loadAllImages(); // tải ảnh trước khi bắt đàua trò chơi
         initComponents();
+ // Gọi trước khi vào các màn hình chơi
+//        initComponents();
     }
-    LevelScreen level;
+//    LevelScreen level;
     public void setLevel(String level){
         levelButton.setText("CẤP ĐỘ: " + level);
     }
@@ -127,7 +130,7 @@ public class StartScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        GameConfig config = new GameConfig(5, 6, 0);
+        GameConfig config = new GameConfig(10, 10, 0);
         MainScreen Main = new MainScreen(config);
         Main.setVisible(true);
         this.dispose();

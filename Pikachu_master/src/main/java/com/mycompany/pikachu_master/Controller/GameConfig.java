@@ -5,12 +5,14 @@
 package com.mycompany.pikachu_master.Controller;
 
 public class GameConfig {
-    public int rows, cols, timeLimit; // timeLimit = 0 là vô hạn
+    public int rows, cols, timeLimit; // timeLimit = -1 là vô hạn
+//    String Level;
     
     public GameConfig(int rows, int cols, int timeLimit) {
         this.rows = rows;
         this.cols = cols;
         this.timeLimit = timeLimit;
+//        this.Level = Level;
     }
     
     public int GetRows(){
@@ -24,5 +26,9 @@ public class GameConfig {
     public int GetTimeLimit(){
         return timeLimit;
     }
+    
+//    public String GetLevel(){
+//        return Level;
+//    }
     
 }

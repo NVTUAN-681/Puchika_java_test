@@ -28,8 +28,6 @@ public class MainScreen extends javax.swing.JFrame {
 
     public MainScreen(GameConfig config) {
         this.config = config;
-//        setContentPane(new BackgroundMain());
-//        initComponents();
         setContentPane(new BackgroundStartScreen());
         initComponents();
 
