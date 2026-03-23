@@ -9,6 +9,8 @@ import com.mycompany.pikachu.Module.Algorithm.IAlgorithm;
 import com.mycompany.pikachu.Module.Algorithm.MediumModeAlgorithm;
 
 import com.mycompany.pikachu.Module.Model.Board;
+import com.mycompany.pikachu.Module.Model.Cell;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -50,6 +52,27 @@ public class Pikachu {
             if (a.checkPath(b, b.getCell(x1, y1), b.getCell(x2, y2))) {
                 System.out.println(a.getPath());
                 a.removePair(b.getCell(x1, y1), b.getCell(x2, y2), b);
+                // Nếu ăn trúng 2 ô tên lửa
+                if (b.getCell(x1, y1).getId() == 1) {
+                    for (Integer key : a.getMap().keySet()) {
+                        if (key > 1) {
+                            List<Cell> cells = a.getMap().get(key);
+                            int size = a.getMap().get(key).size();
+                            for (int i = 0; i < size; i++) {
+                                if (cells.get(i).isStatus() == true) {
+                                    Cell cellI = cells.get(i);
+                                    for (int j = i + 1; j < size; j++) {
+                                        if (cells.get(j).isStatus() == true) {
+                                            Cell cellJ = cells.get(j);
+                                            a.removePair(cellI, cellJ, b);
+                                        }
+                                    }
+                                }
+                            }                 
+                        }
+
+                    }
+                }
                 if (b.getTotalCells() > 0 && a.hasAnyMatch(b) == false) {
                     a.shuffle(b);
                 }                
