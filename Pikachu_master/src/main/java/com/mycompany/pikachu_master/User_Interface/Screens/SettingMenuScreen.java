@@ -22,6 +22,10 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         this.start = start;
     }
 
+    SettingMenuScreen() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,25 +36,25 @@ public class SettingMenuScreen extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jButton3 = new javax.swing.JButton();
+        exitButton6 = new javax.swing.JButton();
         soundButton = new javax.swing.JToggleButton();
         volumnButton = new javax.swing.JToggleButton();
+        authorButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jButton3.setText("<");
-        jButton3.setPreferredSize(new java.awt.Dimension(50, 30));
-        jButton3.addActionListener(this::jButton3ActionPerformed);
+        exitButton6.setText("<");
+        exitButton6.setPreferredSize(new java.awt.Dimension(50, 30));
+        exitButton6.addActionListener(this::exitButton6ActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 27;
         gridBagConstraints.ipady = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
-        getContentPane().add(jButton3, gridBagConstraints);
+        getContentPane().add(exitButton6, gridBagConstraints);
 
         soundButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 14)); // NOI18N
         soundButton.setText("🔊");
@@ -78,19 +82,32 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 225;
         gridBagConstraints.ipady = 17;
-        gridBagConstraints.insets = new java.awt.Insets(10, 20, 120, 30);
+        gridBagConstraints.insets = new java.awt.Insets(10, 20, 0, 30);
         getContentPane().add(volumnButton, gridBagConstraints);
+
+        authorButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        authorButton.setText("ĐỘI NGŨ SẢN XUẤT");
+        authorButton.setPreferredSize(new java.awt.Dimension(250, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 112;
+        gridBagConstraints.ipady = 17;
+        gridBagConstraints.insets = new java.awt.Insets(6, 20, 74, 30);
+        getContentPane().add(authorButton, gridBagConstraints);
 
         setSize(new java.awt.Dimension(314, 408));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void exitButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton6ActionPerformed
         // TODO add your handling code here:
         start.setVisible(true);
         this.dispose();
         
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_exitButton6ActionPerformed
 
     private void soundButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soundButtonActionPerformed
         // TODO add your handling code here:
@@ -136,7 +153,8 @@ public class SettingMenuScreen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton authorButton;
+    private javax.swing.JButton exitButton6;
     private javax.swing.JToggleButton soundButton;
     private javax.swing.JToggleButton volumnButton;
     // End of variables declaration//GEN-END:variables

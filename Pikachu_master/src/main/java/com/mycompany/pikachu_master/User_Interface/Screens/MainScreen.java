@@ -275,7 +275,7 @@ public class MainScreen extends javax.swing.JFrame {
     private void settingmainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingmainButtonActionPerformed
         // TODO add your handling code here:
         //Pause Setting = new Pause();
-        Pause pause = new Pause(this);
+        Pause pause = new Pause(this,config);
         pause.setVisible(true);
         // this.dispose();
     }//GEN-LAST:event_settingmainButtonActionPerformed
@@ -308,10 +308,10 @@ public class MainScreen extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        GameConfig config = new GameConfig(6, 5, 12);
+//        GameConfig config = new GameConfig(6, 5, 12);
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MainScreen(config).setVisible(true));
+//        java.awt.EventQueue.invokeLater(() -> new MainScreen(config).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

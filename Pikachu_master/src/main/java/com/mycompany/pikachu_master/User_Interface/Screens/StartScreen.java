@@ -20,9 +20,12 @@ public class StartScreen extends javax.swing.JFrame {
     /**
      * Creates new form StartScreen
      */
+//    public static GameConfig config2 = new GameConfig();
+    private GameConfig config;
     public StartScreen() {
+        this.config = new GameConfig(10, 10, 10,null);
         setContentPane(new BackgroundMain());
-        ImageLoad.loadAllImages(); // tải ảnh trước khi bắt đàua trò chơi
+        ImageLoad.loadAllImages(); // tải ảnh trước khi bắt đầu trò chơi
         initComponents();
  // Gọi trước khi vào các màn hình chơi
 //        initComponents();
@@ -30,6 +33,13 @@ public class StartScreen extends javax.swing.JFrame {
 //    LevelScreen level;
     public void setLevel(String level){
         levelButton.setText("CẤP ĐỘ: " + level);
+    }
+    
+    
+    
+    public void UpdateLevel(int rows, int cols, int TimeLimit, String Level){
+        this.config = new GameConfig(rows, cols, TimeLimit, Level);
+        levelButton.setText("CẤP ĐỘ: " + Level);
     }
 
     @SuppressWarnings("unchecked")
@@ -130,7 +140,7 @@ public class StartScreen extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
-        GameConfig config = new GameConfig(10, 10, 0);
+
         MainScreen Main = new MainScreen(config);
         Main.setVisible(true);
         this.dispose();

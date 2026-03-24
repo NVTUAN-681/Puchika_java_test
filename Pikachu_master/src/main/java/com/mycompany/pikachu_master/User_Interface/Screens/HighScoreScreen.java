@@ -58,6 +58,7 @@ public class HighScoreScreen extends javax.swing.JFrame {
         getContentPane().add(exitButton1, gridBagConstraints);
 
         max_point.setFont(new java.awt.Font("Segoe UI", 1, 50)); // NOI18N
+        max_point.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         max_point.setText("9999");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

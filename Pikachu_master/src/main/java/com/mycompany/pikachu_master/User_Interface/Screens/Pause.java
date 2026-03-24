@@ -21,11 +21,13 @@ public class Pause extends javax.swing.JFrame {
      */
     
     MainScreen main;
+    GameConfig config;
     
-    public Pause(MainScreen main) {
+    public Pause(MainScreen main, GameConfig config) {
         setContentPane(new BackgroundPause());
         initComponents();
         this.main = main;
+        this.config = config;
     }
     
     /**
@@ -38,8 +40,8 @@ public class Pause extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        nextButton = new javax.swing.JButton();
-        newButton = new javax.swing.JButton();
+        Choi_tiep = new javax.swing.JButton();
+        Van_moi = new javax.swing.JButton();
         instructionButton1 = new javax.swing.JButton();
         exitmenuButton = new javax.swing.JButton();
         volumnButton = new javax.swing.JToggleButton();
@@ -48,10 +50,10 @@ public class Pause extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        nextButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        nextButton.setText("CHƠI TIẾP");
-        nextButton.setPreferredSize(new java.awt.Dimension(250, 40));
-        nextButton.addActionListener(this::nextButtonActionPerformed);
+        Choi_tiep.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Choi_tiep.setText("CHƠI TIẾP");
+        Choi_tiep.setPreferredSize(new java.awt.Dimension(250, 40));
+        Choi_tiep.addActionListener(this::Choi_tiepActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -60,12 +62,12 @@ public class Pause extends javax.swing.JFrame {
         gridBagConstraints.ipadx = 150;
         gridBagConstraints.ipady = 13;
         gridBagConstraints.insets = new java.awt.Insets(100, 26, 0, 24);
-        getContentPane().add(nextButton, gridBagConstraints);
+        getContentPane().add(Choi_tiep, gridBagConstraints);
 
-        newButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        newButton.setText("VÁN MỚI");
-        newButton.setPreferredSize(new java.awt.Dimension(250, 40));
-        newButton.addActionListener(this::newButtonActionPerformed);
+        Van_moi.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        Van_moi.setText("VÁN MỚI");
+        Van_moi.setPreferredSize(new java.awt.Dimension(250, 40));
+        Van_moi.addActionListener(this::Van_moiActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -74,7 +76,7 @@ public class Pause extends javax.swing.JFrame {
         gridBagConstraints.ipadx = 155;
         gridBagConstraints.ipady = 13;
         gridBagConstraints.insets = new java.awt.Insets(0, 26, 0, 24);
-        getContentPane().add(newButton, gridBagConstraints);
+        getContentPane().add(Van_moi, gridBagConstraints);
 
         instructionButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         instructionButton1.setText("HƯỚNG DẪN");
@@ -140,23 +142,23 @@ public class Pause extends javax.swing.JFrame {
     private void volumnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_volumnButtonActionPerformed
         // TODO add your handling code here:
         if (volumnButton.isSelected()) {
-            volumnButton.setText("🚫🎧");
+            volumnButton.setText("🚫");
         } else {
             volumnButton.setText("🎧");
         }
     }//GEN-LAST:event_volumnButtonActionPerformed
 
-    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
+    private void Choi_tiepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Choi_tiepActionPerformed
         // TODO add your handling code here:    
         this.setVisible(false);
-    }//GEN-LAST:event_nextButtonActionPerformed
+    }//GEN-LAST:event_Choi_tiepActionPerformed
 
-    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
+    private void Van_moiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Van_moiActionPerformed
         // TODO add your handling code here:
-        GameConfig config = new GameConfig(6, 5,0);
+//        GameConfig config = new GameConfig(6, 5,0);
         main.resertGame(config);
         this.dispose();
-    }//GEN-LAST:event_newButtonActionPerformed
+    }//GEN-LAST:event_Van_moiActionPerformed
 
     private void exitmenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuButtonActionPerformed
         // TODO add your handling code here:
@@ -207,10 +209,10 @@ public class Pause extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Choi_tiep;
+    private javax.swing.JButton Van_moi;
     private javax.swing.JButton exitmenuButton;
     private javax.swing.JButton instructionButton1;
-    private javax.swing.JButton newButton;
-    private javax.swing.JButton nextButton;
     private javax.swing.JToggleButton soundButton;
     private javax.swing.JToggleButton volumnButton;
     // End of variables declaration//GEN-END:variables

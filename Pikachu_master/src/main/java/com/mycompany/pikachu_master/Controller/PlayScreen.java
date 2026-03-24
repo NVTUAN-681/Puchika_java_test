@@ -5,10 +5,15 @@
 package com.mycompany.pikachu_master.Controller;
 
 import com.mycompany.pikachu_master.Algorithm.ClassicAlgorithm;
+import com.mycompany.pikachu_master.Algorithm.IAlgorithm;
+import com.mycompany.pikachu_master.Algorithm.MediumModeAlgorithm;
 import com.mycompany.pikachu_master.Model.Board;
 import com.mycompany.pikachu_master.Model.Cell;
 import com.mycompany.pikachu_master.User_Interface.Components.ButtonMain;
-import com.mycompany.pikachu_master.User_Interface.Screens.LevelScreen;
+
+import com.mycompany.pikachu_master.User_Interface.Components.RoundedIconButton;
+import com.mycompany.pikachu_master.User_Interface.Screens.HonorScreen;
+import com.mycompany.pikachu_master.User_Interface.Screens.MainScreen;
 import com.mycompany.pikachu_master.Utils.ImageLoad;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,118 +22,143 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+import javax.swing.BorderFactory;
 
 /**
  *
  * @author DELL
  */
 public class PlayScreen extends JPanel implements ActionListener {
-    private Board board;
-    private ClassicAlgorithm algorithm;
-    private ButtonMain[][] btnMatrix;
+    private final Board board;
+    private IAlgorithm algorithm;
+    private final RoundedIconButton[][] btnMatrix;
     private Cell firstClick = null;
     private GameConfig config;
-    
+    private int rows, cols, timelimit, tileSize;
+    private int remainingTiles;
+    private RoundedIconButton firstClickBtn;
 
-    public PlayScreen(GameConfig config ) {
-        
-        int rows = config.GetRows();
-        int cols = config.GetCols();
-        int timeLimit = config.GetTimeLimit();
-        int tileSize = 55;
+    public PlayScreen(GameConfig config) {
+        this.config = config;
+        this.rows = config.GetRows();
+        this.cols = config.GetCols();
+        this.timelimit = config.GetTimeLimit();
+        this.tileSize = 55;
+        if(config.GetLevel().equals("AFICA")){
+            this.algorithm = new ClassicAlgorithm();
+        }
+        else if(config.GetLevel().equals("ASIAN")){
+            this.algorithm = new MediumModeAlgorithm();
+        }
+        this.remainingTiles = this.rows * this.cols;
         
         setLayout(new GridLayout(rows, cols, 0, 0)); 
         this.setPreferredSize(new Dimension(cols * tileSize, rows * tileSize));
         this.setMaximumSize(new Dimension(cols * tileSize, rows * tileSize));
         this.setMinimumSize(new Dimension(cols * tileSize, rows * tileSize));
-        
+
         this.setOpaque(false); // Dòng này làm cho Panel không còn màu nền xám nữa
         this.setBackground(new Color(0, 0, 0, 0)); // Đảm bảo màu nền hoàn toàn trong suốt
-        algorithm = new ClassicAlgorithm();
         board = new Board(config.GetRows(), config.GetCols()); 
         board.initBoard(algorithm); // Tạo số ngẫu nhiên từ thuật toán chính
-//        setLayout(new GridLayout(config.GetRows(), config.GetCols(), 0, 0)); // Ma trận 6 dòng, 5 cột
-        btnMatrix = new ButtonMain[config.GetRows() + 2][config.GetCols() + 2]; // Bao gồm cả viền trống nếu cần
+        btnMatrix = new RoundedIconButton[rows + 2][cols + 2]; // Bao gồm cả viền trống nếu cần
 
-
-        for (int i = 1; i <= config.GetRows(); i++) {
-            for (int j = 1; j <=  config.GetCols(); j++) {
+        for (int i = 1; i <= rows; i++) {
+            for (int j = 1; j <= cols; j++) {
                 int id = board.getCell(i, j).getId();
-//                Broad
-                // Hiển thị con số ngẫu nhiên từ Board
-//                btnMatrix[i][j] = new ButtonMain(i, j, String.valueOf(cell.getId()));
-                btnMatrix[i][j] = new ButtonMain(i, j, null);
                 ImageIcon icon = ImageLoad.getImage(id);
-                if(icon != null){
-                    btnMatrix[i][j].setIcon(icon);
-                }
+                btnMatrix[i][j] = new RoundedIconButton(icon, 20);
                 btnMatrix[i][j].addActionListener(this);
+
                 add(btnMatrix[i][j]);
             }
         }
     }
+    
+    private void updateAllButtons() {
+    for (int i = 1; i <= this.rows; i++) {
+        for (int j = 1; j <= this.cols; j++) {
+            Cell cell = board.getCell(i, j);
+            if (cell.isStatus()) {
+                btnMatrix[i][j].setIcon(ImageLoad.getImage(cell.getId()));
+                btnMatrix[i][j].setVisible(true);
+            } else {
+                btnMatrix[i][j].setVisible(false);
+            }
+            // Reset lại viền nếu có
+            btnMatrix[i][j].setBorderPainted(false);
+        }
+    }
+}
 
-//    @Override
-//    public void actionPerformed(ActionEvent e) {
-//        ButtonMain clickedBtn = (ButtonMain) e.getSource();
-//        int r = clickedBtn.getxCoord();
-//        int c = clickedBtn.getyCoord();
-//        Cell currentCell = board.getCell(r, c);
-//
-//        if (!currentCell.isStatus()) return; // Ô đã biến mất (>0 là có, 0 là trống)
-//
-//        if (firstClick == null) {
-//            firstClick = currentCell;
-//            clickedBtn.setBackground(Color.YELLOW); // Đánh dấu ô thứ nhất
-//        } else {
-//            // Gửi tọa độ về thuật toán xử lý
-//            if (algorithm.checkPath(board, firstClick, currentCell)) {
-//                // Xử lý logic khi ăn được
-//                algorithm.removePair(firstClick, currentCell, board);
-//                
-//                // Cập nhật giao diện (ẩn các ô = 0)
-//                btnMatrix[firstClick.getX()][firstClick.getY()].setVisible(false);
-//                btnMatrix[currentCell.getX()][currentCell.getY()].setVisible(false);
-//                
-//                System.out.println("delete: [" + firstClick.getX() + " " + firstClick.getY() + "] ["+ currentCell.getX() + " " + currentCell.getY() +"]");
-//            } else {
-//                // Không ăn được thì bỏ chọn
-//                btnMatrix[firstClick.getX()][firstClick.getY()].setBackground(null);
-//            }
-//            firstClick = null;
-//        }
-//    }
     @Override
     public void actionPerformed(ActionEvent e) {
-        ButtonMain clickedBtn = (ButtonMain) e.getSource();
-        int r = clickedBtn.getxCoord();
-        int c = clickedBtn.getyCoord();
+        RoundedIconButton clickedBtn = (RoundedIconButton) e.getSource();
+//        int r = clickedBtn.getxCoord();
+//        int c = clickedBtn.getyCoord();
+        int r = -1, c = -1;
+        for (int i = 1; i <= this.rows; i++) {
+            for (int j = 1; j <= this.cols; j++) {
+                if (btnMatrix[i][j] == clickedBtn) {
+                    r = i;
+                    c = j;
+                    break;
+                }
+            }
+        }
+        if (r == -1 || c == -1) {
+            return;
+        }
         Cell currentCell = board.getCell(r, c);
 
-        if (!currentCell.isStatus()) return; 
+        if (!currentCell.isStatus()) {
+            return;
+        }
 
-        if (firstClick == null) {
-            firstClick = currentCell;
+        if (firstClick  == null) {
+            firstClick  = currentCell;
+            
+            firstClickBtn = clickedBtn;
+            clickedBtn.setSelectedState(true);
 
-            // --- HIỆU ỨNG VIỀN KHI CHỌN ---
-            // Tạo viền màu vàng, độ dày 3 pixel
-            clickedBtn.setBorder(javax.swing.BorderFactory.createLineBorder(Color.YELLOW, 3));
-            clickedBtn.setBorderPainted(true); // Bật hiển thị viền
         } else {
             // Lấy nút đầu tiên để xử lý viền
-            ButtonMain firstBtn = btnMatrix[firstClick.getX()][firstClick.getY()];
-
-            if (algorithm.checkPath(board, firstClick, currentCell)) {
+            //RoundedIconButton firstBtn = btnMatrix[firstClick.getX()][firstClick.getY()];
+            RoundedIconButton firstBtn = firstClickBtn;
+            // Nếu click lại chính ô vừa chọn thì hủy chọn
+            if (firstClick == currentCell) {
+                 firstBtn.setSelectedState(false);
+                 firstClick  = null;
+                 firstClickBtn = null;
+                 return;
+            }
+            if (firstClick.getId() == currentCell.getId() && algorithm.checkPath(board, firstClick, currentCell)) {
                 // Ăn được: Ẩn cả 2 nút
                 algorithm.removePair(firstClick, currentCell, board);
                 firstBtn.setVisible(false);
                 clickedBtn.setVisible(false);
+                firstBtn.setSelectedState(false);
+                updateAllButtons();
+                remainingTiles -= 2;
+                if (remainingTiles <= 0) {
+                    showHonorScreen();
+                }
             } else {
-                // Không ăn được: Tắt viền của nút thứ nhất (trở về trạng thái cũ)
-                firstBtn.setBorderPainted(false); 
-                // Nếu em muốn báo hiệu chọn sai, có thể nháy đỏ ở đây
+                firstBtn.setSelectedState(false);
+//                // Nếu em muốn báo hiệu chọn sai, có thể nháy đỏ ở đây
             }
             firstClick = null;
+            firstClickBtn = null;
+        }
     }
-}
+
+    private void showHonorScreen() {
+        java.awt.Window windown = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if(windown instanceof MainScreen) {
+            MainScreen main = (MainScreen) windown;
+
+            HonorScreen honorScreen = new HonorScreen(main, config);
+            honorScreen.setVisible(true);
+        }
+    }
 }
