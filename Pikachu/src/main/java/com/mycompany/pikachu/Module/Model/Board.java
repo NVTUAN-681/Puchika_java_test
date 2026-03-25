@@ -35,12 +35,12 @@ public class Board {
         this.totalCells = rows * cols;
     }
     
-    public void initBoard(IAlgorithm a) {
+    public void initBoard(IAlgorithm a, int NoP) {
         Random rand = new Random();
         ArrayList<Integer> list = new ArrayList<>();
         int halfElems = totalCells / 2;
         for (int i = 0; i < halfElems; i++) {
-            int randomNumber = rand.nextInt(1, 20) + 1;
+            int randomNumber = rand.nextInt(0, NoP) + 1;
             list.add(randomNumber);
             list.add(randomNumber);
         }
@@ -72,7 +72,7 @@ public class Board {
         //System.out.println(a.getMap());
     }
     
-    public void initHardBoard(IAlgorithm a, int NoP) {
+    public void initHardBoard(IAlgorithm a, int NoP) { // NoP (Number of Pokemons): số loại hình trên bảng
         
         ArrayList<Integer> list = new ArrayList<>();
         int halfElems = totalCells / 2;
