@@ -4,7 +4,6 @@
  */
 package com.mycompany.pikachu_master.Model;
 
-
 import com.mycompany.pikachu_master.Algorithm.IAlgorithm;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,15 +35,56 @@ public class Board {
         this.totalCells = rows * cols;
     }
     
-    public void initBoard(IAlgorithm a) {
+    public void initBoard(IAlgorithm a, int NoP) {
         Random rand = new Random();
         ArrayList<Integer> list = new ArrayList<>();
         int halfElems = totalCells / 2;
         for (int i = 0; i < halfElems; i++) {
-            int randomNumber = rand.nextInt(1, 20) + 1;
+            int randomNumber = rand.nextInt(0, NoP) + 1;
             list.add(randomNumber);
             list.add(randomNumber);
         }
+        
+        do {
+            Collections.shuffle(list);
+            int index = 0;
+            for (int i = 0; i <= this.rows + 1; i++) {
+                for (int j = 0; j <= this.cols + 1; j++) {
+                    if (i == 0 || j == 0 || i == this.rows + 1 || j == this.cols + 1) {
+                        matrix[i][j] = new Cell(i, j, 0, false);
+                    } else {
+                        matrix[i][j] = new Cell(i, j, list.get(index++), true);
+                    }
+                }
+            }
+            
+            a.getMap().clear();
+            for (int i = 1; i <= this.rows; i++) {
+                for (int j = 1; j <= this.cols; j++) {
+                    if (a.getMap().containsKey(matrix[i][j].getId()) == false) {
+                        a.getMap().put(matrix[i][j].getId(), new ArrayList<>());
+                    }
+                    a.getMap().get(matrix[i][j].getId()).add(matrix[i][j]);
+                }
+            }
+
+        } while(a.hasAnyMatch(this) == false);
+        //System.out.println(a.getMap());
+    }
+    
+    public void initHardBoard(IAlgorithm a, int NoP, boolean rocket) {
+    
+        // NoP (Number of Pokemons): số loại hình trên bảng
+        // rocket : biến xác nhận xem có cho tên lửa (Id = 1) vào màn chơi không
+        
+        ArrayList<Integer> list = new ArrayList<>();
+        int halfElems = totalCells / 2;
+        for (int i = 1; i < halfElems; i++) {
+            if(i != 1 || (i == 1 && rocket == false)) {
+                list.add(i % NoP);
+                list.add(i % NoP);
+            }
+        }        
         
         do {
             Collections.shuffle(list);

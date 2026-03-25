@@ -24,7 +24,7 @@ public class Pikachu {
         Board b = new Board(6, 6);
         IAlgorithm a = new MediumModeAlgorithm();
         System.out.println("Hello world!");
-        b.initBoard(a);
+        b.initBoard(a, 9);
 //        int[][] values = {
 //            {1, 1, 1, 1, 1, 1},
 //            {1, 1, 1, 1, 1, 1},

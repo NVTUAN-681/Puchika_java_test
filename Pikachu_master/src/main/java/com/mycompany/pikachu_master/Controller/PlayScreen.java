@@ -67,7 +67,7 @@ public class PlayScreen extends JPanel implements ActionListener {
         this.setOpaque(false); // Dòng này làm cho Panel không còn màu nền xám nữa
         this.setBackground(new Color(0, 0, 0, 0)); // Đảm bảo màu nền hoàn toàn trong suốt
         board = new Board(config.GetRows(), config.GetCols()); 
-        board.initBoard(algorithm); // Tạo số ngẫu nhiên từ thuật toán chính
+        board.initBoard(algorithm, 20); // Tạo số ngẫu nhiên từ thuật toán chính
         btnMatrix = new RoundedIconButton[rows + 2][cols + 2]; // Bao gồm cả viền trống nếu cần
 
         for (int i = 1; i <= rows; i++) {
