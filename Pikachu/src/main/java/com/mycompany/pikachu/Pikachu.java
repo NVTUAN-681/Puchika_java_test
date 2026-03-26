@@ -21,19 +21,19 @@ public class Pikachu {
 
     public static void main(String[] args) {
         //System.out.println("Hello World!");
-        Board b = new Board(6, 6);
-        IAlgorithm a = new MediumModeAlgorithm();
+        Board b = new Board(6, 5, true);
+        IAlgorithm a = new ClassicAlgorithm();
         System.out.println("Hello world!");
-        b.initBoard(a, 20);
-//        int[][] values = {
-//            {1, 1, 1, 1, 1, 1},
-//            {1, 1, 1, 1, 1, 1},
-//            {1, 1, 1, 1, 1, 1},
-//            {1, 1, 1, 1, 1, 1},
-//            {1, 1, 1, 1, 1, 1},
-//            {1, 1, 1, 1, 1, 1}
-//        };
-//        b.initBoardFixed(a, values);
+        //b.initBoard(a, 20);
+        int[][] values = {
+            {1, 1, 3, 1, 2},
+            {3, 4, 2, 5, 6},
+            {7, 8, 2, 1, 9},
+            {10, 11, 12, 10, 12},
+            {7, 9, 11, 6, 11},
+            {2, 11, 8, 4, 5}
+        };
+        b.initBoardFixed(a, values);
         System.out.println("Hello world!");
         //System.out.println("Hello World!");
         Scanner sc = new Scanner(System.in);
@@ -41,10 +41,6 @@ public class Pikachu {
         
         do {
             b.printFull();
-            //System.out.println("");
-            //b.printStatus();
-            //b.printCoordinates();
-            //System.out.println(((ClassicAlgorithm) a).getMap());
             x1 = sc.nextInt();
             y1 = sc.nextInt();
             x2 = sc.nextInt();
@@ -52,27 +48,6 @@ public class Pikachu {
             if (a.checkPath(b, b.getCell(x1, y1), b.getCell(x2, y2))) {
                 System.out.println(a.getPath());
                 a.removePair(b.getCell(x1, y1), b.getCell(x2, y2), b);
-                // Nếu ăn trúng 2 ô tên lửa
-                if (b.getCell(x1, y1).getId() == 1) {
-                    for (Integer key : a.getMap().keySet()) {
-                        if (key > 1) {
-                            List<Cell> cells = a.getMap().get(key);
-                            int size = a.getMap().get(key).size();
-                            for (int i = 0; i < size; i++) {
-                                if (cells.get(i).isStatus() == true) {
-                                    Cell cellI = cells.get(i);
-                                    for (int j = i + 1; j < size; j++) {
-                                        if (cells.get(j).isStatus() == true) {
-                                            Cell cellJ = cells.get(j);
-                                            a.removePair(cellI, cellJ, b);
-                                        }
-                                    }
-                                }
-                            }                 
-                        }
-
-                    }
-                }
                 if (b.getTotalCells() > 0 && a.hasAnyMatch(b) == false) {
                     a.shuffle(b);
                 }                

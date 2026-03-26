@@ -35,5 +35,10 @@ public class CellPair {
     public void setCell2(Cell cell2) {
         this.cell2 = cell2;
     }
+
+    @Override
+    public String toString() {
+        return "CellPair{" + "cell1=" + cell1.toString() + ", cell2=" + cell2.toString() + '}';
+    }
     
 }
