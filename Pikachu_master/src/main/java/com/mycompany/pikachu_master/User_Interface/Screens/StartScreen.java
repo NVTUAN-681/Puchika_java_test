@@ -5,6 +5,7 @@
 package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
+import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundStartScreen;
 import com.mycompany.pikachu_master.Utils.ImageLoad;
@@ -21,25 +22,25 @@ public class StartScreen extends javax.swing.JFrame {
     /**
      * Creates new form StartScreen
      */
-//    public static GameConfig config2 = new GameConfig();
     private GameConfig config;
-    public StartScreen(GameConfig config) {
+    private LevelType level;
+    public StartScreen(GameConfig config,LevelType level) {
         this.config = config;
+        this.level = level;
         setContentPane(new BackgroundStartScreen());
         ImageLoad.loadAllImages(); // tải ảnh trước khi bắt đầu trò chơi
         initComponents();
         this.setMinimumSize(new java.awt.Dimension(800, 600));
- // Gọi trước khi vào các màn hình chơi
-//        initComponents();
     }
-//    LevelScreen level;
-    public void setLevel(String level){
-        levelButton.setText("CẤP ĐỘ: " + level);
+    
+    public void setLevel(String Level){
+        levelButton.setText("CẤP ĐỘ: " + Level);
     }
     
        
-    public void UpdateLevel(int rows, int cols, int TimeLimit, String Level){
-        this.config = new GameConfig(rows, cols, TimeLimit, Level);
+    public void UpdateLevel(String Level){
+        this.config = new GameConfig(Level);
+        this.level = LevelType.getByName(Level);
         levelButton.setText("CẤP ĐỘ: " + Level);
     }
 
@@ -142,7 +143,7 @@ public class StartScreen extends javax.swing.JFrame {
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
 
-        MainScreen Main = new MainScreen(config);
+        MainScreen Main = new MainScreen(config, this.level);
         Main.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_playButtonActionPerformed
@@ -151,7 +152,6 @@ public class StartScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
         HighScoreScreen Max = new HighScoreScreen(this);
         Max.setVisible(true);
-       //this.setVisible(false);
     }//GEN-LAST:event_maxButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
@@ -200,10 +200,10 @@ public class StartScreen extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        GameConfig config = new GameConfig(6, 6, 150, "Start");
+        GameConfig config = new GameConfig("Start");
+        LevelType level = LevelType.START;
     /* Create and display the form */
-//    GameConfig config = new GameConfig(1,2,10,"EUROPE");
-    java.awt.EventQueue.invokeLater (() -> new StartScreen(config).setVisible(true));
+    java.awt.EventQueue.invokeLater (() -> new StartScreen(config, level).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

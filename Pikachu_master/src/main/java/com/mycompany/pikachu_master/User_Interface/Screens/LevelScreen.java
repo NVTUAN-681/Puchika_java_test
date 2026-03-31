@@ -112,8 +112,8 @@ public class LevelScreen extends javax.swing.JFrame {
 
     private void africaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_africaButtonActionPerformed
         // TODO add your handling code here:
-        start.setLevel("AFICA");
-        start.UpdateLevel(5, 6, 60, "AFICA");
+        start.setLevel("AFRICA");
+        start.UpdateLevel("AFRICA");
         start.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_africaButtonActionPerformed
@@ -121,7 +121,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void asianButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_asianButtonActionPerformed
         // TODO add your handling code here:
         start.setLevel("ASIAN");
-        start.UpdateLevel(10, 20, 250, "ASIAN");
+        start.UpdateLevel("ASIAN");
         start.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_asianButtonActionPerformed
@@ -129,7 +129,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void europeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_europeButtonActionPerformed
         // TODO add your handling code here:
         start.setLevel("EUROPE");
-        start.UpdateLevel(7, 10, 90, "EUROPE");
+        start.UpdateLevel("EUROPE");
         start.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_europeButtonActionPerformed

@@ -18,14 +18,18 @@ import javax.swing.border.BevelBorder;
  */
 public class RoundedIconButton extends JButton {
     
-   private final Color normalColor = new Color(220, 220, 220); // Màu gạch gốc
+    private final Color normalColor = new Color(220, 220, 220); // Màu gạch gốc
     private final Color hoverColor = new Color(245, 245, 245);  // Màu sáng khi di chuột
     private final Color selectedColor = new Color(255, 255, 100); // Màu vàng khi bấm chọn
     private boolean isSelectedState = false;
+    
+    private final int rows;
+    private final int cols;
 
-    public RoundedIconButton(ImageIcon icon, int radius) {
+    public RoundedIconButton(ImageIcon icon, int radius, int x, int y) {
         super(icon);
-        
+        this.rows = x;
+        this.cols = y;
         // Thiết lập viền 3D nổi lên và màu nền
         setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
         setBackground(normalColor);
@@ -46,6 +50,16 @@ public class RoundedIconButton extends JButton {
             }
         });
     }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+
 
     public void setSelectedState(boolean selected) {
         this.isSelectedState = selected;

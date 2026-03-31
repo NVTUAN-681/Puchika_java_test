@@ -5,6 +5,7 @@
 package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
+import com.mycompany.pikachu_master.Model.LevelType;
 
 /**
  *
@@ -20,12 +21,14 @@ public class LossScreen extends javax.swing.JFrame {
     
     MainScreen main;
     GameConfig config;
+    LevelType level;
     
-    public LossScreen(MainScreen main, GameConfig config) {
+    public LossScreen(MainScreen main, GameConfig config , LevelType level) {
         initComponents();
         this.setMinimumSize(new java.awt.Dimension(300, 400));
         this.main = main;
         this.config = config;
+        this.level = level;
         
         this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         
@@ -35,7 +38,7 @@ public class LossScreen extends javax.swing.JFrame {
             public void windowClosing(java.awt.event.WindowEvent e) {
                main.setEnabled(true);
                 main.dispose(); 
-                StartScreen pika = new StartScreen(config);
+                StartScreen pika = new StartScreen(config, level);
                 pika.setLevel(config.GetLevel());
                 pika.setVisible(true); // Báo màn hình chính đếm thời gian tiếp
             }
@@ -107,13 +110,13 @@ public class LossScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
        // config = new GameConfig(6, 5,150, "");
        main.setEnabled(true);
-       main.resertGame(config);
+       main.resertGame(config, level);
         this.dispose();
     }//GEN-LAST:event_retryButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         // TODO add your handling code here:
-        StartScreen pika = new StartScreen(config);
+        StartScreen pika = new StartScreen(config, level);
         pika.setLevel(config.GetLevel());
         pika.setVisible(true);
         this.dispose();

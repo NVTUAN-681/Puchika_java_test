@@ -6,6 +6,7 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
 import com.mycompany.pikachu_master.Controller.PlayScreen;
+import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundPause;
 import com.mycompany.pikachu_master.User_Interface.Screens.MainScreen;
 /**
@@ -21,13 +22,15 @@ public class PauseScreen extends javax.swing.JFrame {
      */
     MainScreen main;
     GameConfig config;
+    LevelType level;
 
-    public PauseScreen(MainScreen main, GameConfig config) {
+    public PauseScreen(MainScreen main, GameConfig config, LevelType level) {
         setContentPane(new BackgroundPause());
         initComponents();
         this.setMinimumSize(new java.awt.Dimension(300, 400));
-        this.main = main;
+        this.level = level;
         this.config = config;
+        this.main = main;
         
         // ---> VIẾT CODE Ở ĐÂY <---
         // Ghi đè thiết lập của NetBeans: Chỉ ẩn cửa sổ khi bấm X
@@ -169,14 +172,13 @@ public class PauseScreen extends javax.swing.JFrame {
 
     private void Van_moiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Van_moiActionPerformed
         // TODO add your handling code here:
-//        GameConfig config = new GameConfig(6, 5,0);
-        main.resertGame(config);
+        main.resertGame(config, level);
         this.dispose();
     }//GEN-LAST:event_Van_moiActionPerformed
 
     private void exitmenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitmenuButtonActionPerformed
         // TODO add your handling code here:
-        StartScreen pika = new StartScreen(config);
+        StartScreen pika = new StartScreen(config, level);
         pika.setLevel(config.GetLevel());
         pika.setVisible(true);
         main.setVisible(false);
