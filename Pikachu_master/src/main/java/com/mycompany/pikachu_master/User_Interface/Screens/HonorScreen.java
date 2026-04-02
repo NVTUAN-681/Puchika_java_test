@@ -34,7 +34,6 @@ public class HonorScreen extends javax.swing.JFrame {
 
     public HonorScreen(MainScreen main, GameConfig config, LevelType level) {
         this.setUndecorated(true);
-        //má mày thằng lồn
         setContentPane(new BackgroundHonorScreen());
         initComponents();
           
@@ -48,18 +47,9 @@ public class HonorScreen extends javax.swing.JFrame {
         this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setEnabled(true);
         this.main.stopMusic();
-        audioManager.playBGM("/images/Sound/Winner.wav");
+        audioManager.playBGM("/Sound/Winner.wav");
         // Bắt sự kiện bấm nút X
-//        this.addWindowListener(new java.awt.event.WindowAdapter() {
-//            @Override
-//            public void windowClosing(java.awt.event.WindowEvent e) {
-//                main.setEnabled(true);
-//                main.dispose(); 
-//                StartScreen pika = new StartScreen(config);
-//                pika.setLevel(config.GetLevel());
-//                pika.setVisible(true); // Báo màn hình chính đếm thời gian tiếp
-//            }
-//        });
+
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -158,14 +148,14 @@ public class HonorScreen extends javax.swing.JFrame {
         String levelName = config.GetLevel(); 
         
         if (levelName.equalsIgnoreCase("AFRICA")) {
-            audioManager.playBGM("/images/Sound/SoundAfrica_Europe.wav");
+            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
         } else if (levelName.equalsIgnoreCase("ASIAN")) {
-            audioManager.playBGM("/images/Sound/SoundAsian.wav");
+            audioManager.playBGM("/Sound/SoundAsian.wav");
         } else if (levelName.equalsIgnoreCase("EUROPE")) {
-            audioManager.playBGM("/images/Sound/SoundAfrica_Europe.wav");
+            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
         } else {
             // Nhạc mặc định nếu người chơi không chọn màn mà bấm Play ngay từ đầu
-            audioManager.playBGM("/images/Sound/SoundAfrica_Europe.wav");
+            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
         }
 
         main.setEnabled(true);

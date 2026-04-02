@@ -23,7 +23,7 @@ public class ImageLoad {
     private static Map<String, ImageIcon[]> buttonIconMap = new HashMap<>();
 
     // ---> 1. GẮN CỨNG 2 ĐƯỜNG DẪN ẢNH VÀO ĐÂY <---
-    public static final String PATH_1 = "/images/Picture_button/Back_Ground.png";
+    public static final String PATH_1 = "/images/Picture_button/BackgroundButtonInMain.png";
     public static final String PATH_2 = "/images/Picture_button/BackgroundButtonMainGame.png";
     // Hàm load toàn bộ 21 ảnh vào bộ nhớ khi bắt đầu game
     public static void loadAllImagesPika() {
