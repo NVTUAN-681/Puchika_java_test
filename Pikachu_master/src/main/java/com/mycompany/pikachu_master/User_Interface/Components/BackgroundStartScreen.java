@@ -17,7 +17,7 @@ public class BackgroundStartScreen extends JPanel {
     private Image backgroundImage;
 
     public BackgroundStartScreen() {
-        String path = "/images/BackgroundStartScreen.jpg";
+        String path = "/images/Background/BackgroundStartScreen.jpg";
         // Lấy ảnh từ resources thông qua ImageIcon để đảm bảo ảnh tải xong
         ImageIcon icon = new ImageIcon(getClass().getResource(path));
         this.backgroundImage = icon.getImage();

@@ -17,7 +17,7 @@ public class BackgroundPause extends JPanel {
     private Image backgroundImage;
 
     public BackgroundPause() {
-        String path = "/images/BackgroundPause.jpg";
+        String path = "/images/Background/BackgroundPause.jpg";
         // Lấy ảnh từ resources thông qua ImageIcon để đảm bảo ảnh tải xong
         ImageIcon icon = new ImageIcon(getClass().getResource(path));
         this.backgroundImage = icon.getImage();

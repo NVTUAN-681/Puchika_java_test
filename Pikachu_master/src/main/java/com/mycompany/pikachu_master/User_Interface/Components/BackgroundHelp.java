@@ -17,7 +17,7 @@ public class BackgroundHelp extends JPanel {
     private Image backgroundImage;
 
     public BackgroundHelp() {
-        String path = "/images/BackgroundHelp.jpg";
+        String path = "/images/Background/BackgroundHelp.jpg";
         // Lấy ảnh từ resources thông qua ImageIcon để đảm bảo ảnh tải xong
         ImageIcon icon = new ImageIcon(getClass().getResource(path));
         this.backgroundImage = icon.getImage();

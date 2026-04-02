@@ -17,7 +17,7 @@ public class BackgroundMain extends JPanel {
     private Image backgroundImage;
 
     public BackgroundMain() {
-        String path = "/images/backGroundMain.jpg";
+        String path = "/images/Background/backGroundMain.jpg";
         // Lấy ảnh từ resources thông qua ImageIcon để đảm bảo ảnh tải xong
         ImageIcon icon = new ImageIcon(getClass().getResource(path));
         this.backgroundImage = icon.getImage();

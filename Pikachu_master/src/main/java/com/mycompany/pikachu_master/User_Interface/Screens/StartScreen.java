@@ -41,7 +41,7 @@ public class StartScreen extends javax.swing.JFrame {
         this.setMinimumSize(new java.awt.Dimension(800, 600));
         setupAllButtonIcons();
         // 3. GỌI NHẠC NỀN KHI VỪA MỞ MÀN HÌNH CHÍNH LÊN
-        audioManager.playBGM("/images/Sound/SoundStart.wav"); 
+        audioManager.playBGM("/Sound/SoundStart.wav"); 
     }
     
     public void setLevel(String Level){

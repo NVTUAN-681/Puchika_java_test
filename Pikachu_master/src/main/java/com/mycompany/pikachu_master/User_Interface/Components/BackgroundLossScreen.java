@@ -14,7 +14,7 @@ public class BackgroundLossScreen extends JPanel{
       private Image backgroundImage;
 
     public BackgroundLossScreen() {
-        String path = "/images/LossScreen.png";
+        String path = "/images/Background/LossScreen.png";
         // Lấy ảnh từ resources thông qua ImageIcon để đảm bảo ảnh tải xong
         ImageIcon icon = new ImageIcon(getClass().getResource(path));
         this.backgroundImage = icon.getImage();

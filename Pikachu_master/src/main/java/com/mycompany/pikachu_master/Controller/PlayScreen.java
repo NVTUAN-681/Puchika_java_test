@@ -322,7 +322,7 @@ public class PlayScreen extends JPanel implements ActionListener {
         java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
         if (window instanceof MainScreen) {
             MainScreen main = (MainScreen) window;
-            main.playSoundEffect("/images/Sound/eated.wav"); 
+            main.playSoundEffect("/Sound/eated.wav"); 
         }
 // Vẽ đường đi
         drawPathOnOverlay();

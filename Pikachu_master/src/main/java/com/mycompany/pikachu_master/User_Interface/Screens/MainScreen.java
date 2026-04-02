@@ -176,14 +176,14 @@ public class MainScreen extends javax.swing.JFrame {
         String levelName = config.GetLevel(); 
         
         if (levelName.equalsIgnoreCase("AFRICA")) {
-            audioManager.playBGM("/images/Sound/SoundAfrica_Europe.wav");
+            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
         } else if (levelName.equalsIgnoreCase("ASIAN")) {
-            audioManager.playBGM("/images/Sound/SoundAsian.wav");
+            audioManager.playBGM("/Sound/SoundAsian.wav");
         } else if (levelName.equalsIgnoreCase("EUROPE")) {
-            audioManager.playBGM("/images/Sound/SoundAfrica_Europe.wav");
+            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
         } else {
             // Nhạc mặc định nếu người chơi không chọn màn mà bấm Play ngay từ đầu
-            audioManager.playBGM("/images/Sound/SoundAfrica_Europe.wav");
+            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
         }
     }
     

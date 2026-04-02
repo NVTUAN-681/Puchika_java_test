@@ -14,7 +14,7 @@ public class BackgroundSettingMenuScreen extends JPanel{
      private Image backgroundImage;
 
     public BackgroundSettingMenuScreen() {
-        String path = "/images/SettingMenuScreen.png";
+        String path = "/images/Background/SettingMenuScreen.png";
         // Lấy ảnh từ resources thông qua ImageIcon để đảm bảo ảnh tải xong
         ImageIcon icon = new ImageIcon(getClass().getResource(path));
         this.backgroundImage = icon.getImage();
