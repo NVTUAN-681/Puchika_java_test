@@ -22,6 +22,9 @@ public class ImageLoad {
     private static Map<Integer, ImageIcon> imageMap = new HashMap<>();
     private static Map<String, ImageIcon[]> buttonIconMap = new HashMap<>();
 
+    // ---> 1. GẮN CỨNG 2 ĐƯỜNG DẪN ẢNH VÀO ĐÂY <---
+    public static final String PATH_1 = "/images/Picture_button/Back_Ground.png";
+    public static final String PATH_2 = "/images/Picture_button/BackgroundButtonMainGame.png";
     // Hàm load toàn bộ 21 ảnh vào bộ nhớ khi bắt đầu game
     public static void loadAllImagesPika() {
         
@@ -45,36 +48,46 @@ public class ImageLoad {
             }
         }
     }
+    
+    //tách biệt không liên quan đến icon game
+    
 
     public static ImageIcon getImage(int id) {
         return imageMap.get(id);
     }
-    public static ImageIcon[] getMenuFrameIcons(){
-        return buttonIconMap.get("MENU_FRAME"); 
+    
+    // 1. Thêm hàm mới: Trả về mảng Icon dựa trên Key
+    public static ImageIcon[] getButtonIcons(String key){
+        return buttonIconMap.get(key); 
     }
-  
+    
+   // ---> 2. HÀM CŨ CHO STARTSCREEN <---
+    // Vẫn giữ để file StartScreen không bị lỗi, tự động gọi ảnh số 1
     public static void BackgroundButtonsLoad() {
-        String framePath = "/images/Picture_button/Back_Ground.png";
-        URL imgURL = ImageLoad.class.getResource(framePath);
+        loadBg("MENU_FRAME", 1, 650, 60, 25);
+    }
+    
+    // ---> 3. HÀM MỚI: CHỈ CẦN TRUYỀN SỐ 1 HOẶC 2 <---
+    public static void loadBg(String key, int loaiAnh, int w, int h, int corner) {
+        // Nếu loaiAnh = 2 thì lấy PATH_2, còn không thì auto lấy PATH_1
+        String path = (loaiAnh == 2) ? PATH_2 : PATH_1;
         
+        URL imgURL = ImageLoad.class.getResource(path);
         try {
             if (imgURL != null) {
                 BufferedImage originalImage = ImageIO.read(imgURL);
-                // Các nút Menu thường dùng chung 1 kích thước khung
-                int w = 650; 
-                int h = 70;
-                int corner = 25;
 
-                // Tạo icon Normal và Hover sẵn trong bộ nhớ
                 ImageIcon normalIcon = new ImageIcon(Button_Icon.getHighQualityScaledImage(originalImage, w, h, corner));
                 ImageIcon hoverIcon = new ImageIcon(Button_Icon.getHighQualityScaledImage(originalImage, (int)(w*1.025), (int)(h*1.025), corner));
                 
-                // Lưu vào map để dùng chung cho tất cả các nút có cùng size khung
-                buttonIconMap.put("MENU_FRAME", new ImageIcon[]{normalIcon, hoverIcon});
+                // Lưu ảnh vào map với cái tên (key) mày truyền vào
+                buttonIconMap.put(key, new ImageIcon[]{normalIcon, hoverIcon});
+            } else {
+                System.err.println("❌ KHÔNG TÌM THẤY ẢNH BACKGROUND NÚT: " + path);
             }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
 }
