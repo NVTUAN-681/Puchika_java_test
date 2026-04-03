@@ -5,6 +5,7 @@
 package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
+import com.mycompany.pikachu_master.Controller.PlayScreen;
 import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundLossScreen;
 import com.mycompany.pikachu_master.Utils.Button_Icon;
@@ -28,10 +29,14 @@ public class LossScreen extends javax.swing.JFrame {
     MainScreen main;
     GameConfig config;
     LevelType level;
+    PlayScreen play;
     
-     private SoundLoad audioManager = new SoundLoad();
+    private int displayedScore = 0;
+    private int currentTotalScore = 0;
     
-    public LossScreen(MainScreen main, GameConfig config , LevelType level) {
+    private SoundLoad audioManager = new SoundLoad();
+    
+    public LossScreen(MainScreen main, GameConfig config , LevelType level, PlayScreen play) {
         this.setUndecorated(true);
         setContentPane(new BackgroundLossScreen());
         initComponents();
@@ -43,11 +48,12 @@ public class LossScreen extends javax.swing.JFrame {
         this.main = main;
         this.config = config;
         this.level = level;
+        this.play = play;
         
         this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-        
-          this.main.stopMusic();
-        audioManager.playBGM("/images/Sound/Loss.wav");
+        this.updateScore(play.get_TotalScore());
+        this.main.stopMusic();
+        audioManager.playBGM("/Sound/Loss.wav");
         
         // Bắt sự kiện bấm nút X
 //        this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -72,6 +78,45 @@ public class LossScreen extends javax.swing.JFrame {
         });
         
     }
+    
+    public void updateScore(int newScore) {
+    // 1. Tính tổng điểm cuối cùng
+    this.currentTotalScore = newScore;
+    this.displayedScore = 0;
+
+    // 2. Thiết lập cấu hình thời gian
+    final int TotalAnimationTime = 2000;
+    final int TimeDelay = 20;            
+    
+    // 3. Tính toán số bước nhảy và giá trị mỗi bước
+    int totalSteps = TotalAnimationTime / TimeDelay; // Tổng số lần Timer sẽ chạy
+    // Mỗi bước cộng bao nhiêu điểm (dùng số thực để tránh mất mát dữ liệu khi chia)
+    final double incrementPerStep = (double) currentTotalScore / totalSteps;
+
+    javax.swing.Timer scoreTimer = new javax.swing.Timer(TimeDelay, null);
+    scoreTimer.addActionListener(new java.awt.event.ActionListener() {
+        private int currentStep = 0;
+
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            currentStep++;
+            
+            if (currentStep <= totalSteps) {
+                displayedScore = (int) (currentStep * incrementPerStep);
+                if (displayedScore > currentTotalScore) 
+                    displayedScore = currentTotalScore;
+                
+                scoreLabel.setText(String.valueOf(displayedScore));
+            } else {
+                // Bước cuối cùng: Chốt hạ con số chính xác nhất
+                scoreLabel.setText(String.valueOf(currentTotalScore));
+                ((javax.swing.Timer) e.getSource()).stop();
+            }
+        }
+    });
+    
+    scoreTimer.start();
+}
     
      private void setupAllButtonIcons() {
         // ---> 1. THUỐC ĐẶC TRỊ TẬT KÉO DÃN LỆCH CHỮ CỦA NETBEANS <---
@@ -107,6 +152,7 @@ public class LossScreen extends javax.swing.JFrame {
 
         retryButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
+        scoreLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -117,11 +163,10 @@ public class LossScreen extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 150;
         gridBagConstraints.ipady = 7;
-        gridBagConstraints.insets = new java.awt.Insets(70, 74, 0, 76);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(18, 34, 0, 36);
         getContentPane().add(retryButton, gridBagConstraints);
 
         exitButton.setText("THOÁT");
@@ -130,12 +175,26 @@ public class LossScreen extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 158;
         gridBagConstraints.ipady = 7;
-        gridBagConstraints.insets = new java.awt.Insets(6, 74, 58, 76);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 34, 161, 36);
         getContentPane().add(exitButton, gridBagConstraints);
+
+        scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 48)); // NOI18N
+        scoreLabel.setForeground(new java.awt.Color(255, 255, 0));
+        scoreLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scoreLabel.setText("9999");
+        scoreLabel.setToolTipText("");
+        scoreLabel.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 118;
+        gridBagConstraints.ipady = 16;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(75, 34, 0, 36);
+        getContentPane().add(scoreLabel, gridBagConstraints);
 
         setSize(new java.awt.Dimension(314, 408));
         setLocationRelativeTo(null);
@@ -203,5 +262,6 @@ public class LossScreen extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exitButton;
     private javax.swing.JButton retryButton;
+    private javax.swing.JLabel scoreLabel;
     // End of variables declaration//GEN-END:variables
 }

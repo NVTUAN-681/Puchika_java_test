@@ -40,21 +40,34 @@ public class PlayScreen extends JPanel implements ActionListener {
     private Cell firstClick = null;
     private final GameConfig config;
     private LevelType level;
+    private MainScreen main;
+    private HonorScreen Honor;
     private RoundedIconButton firstClickBtn;
     private final ScoreDAO DTB;
     private AsianModel asianModel;
     private boolean isProcessingMismatch = false;
     private int maxTime;
     private int currentTime;
+    private int RewardCount = 0;
     private int TileCount;
     public javax.swing.Timer countdownTimer;
     private javax.swing.JSlider timeline;
+    private int score;
+    private int TotalScore;
+    private int reward;
+    private int totalCoin;
+
+    
     
 
     
-    public PlayScreen(GameConfig config) {
+    public PlayScreen(GameConfig config, MainScreen main ) {
         this.config = config;
         this.DTB = new ScoreDAO();
+        this.main = main;
+        this.score = 0;
+        this.TotalScore = 0;
+        this.reward = 0;
         
 //thiết lập thuật toán và cố định level;        
         switch(config.GetLevel()){
@@ -75,6 +88,18 @@ public class PlayScreen extends JPanel implements ActionListener {
             }
             case "Start" -> {
                 this.level = LevelType.START;
+                this.algorithm = new ClassicAlgorithm();
+            }
+            case "EASY" -> {
+                this.level = LevelType.EASY;
+                this.algorithm = new ClassicAlgorithm();
+            }
+            case "MEDIUM" ->{
+                this.level = LevelType.MEDIUM;
+                this.algorithm = new ClassicAlgorithm();
+            }
+            case "HARD" ->{
+                this.level = LevelType.HARD;
                 this.algorithm = new ClassicAlgorithm();
             }
             default -> {
@@ -169,7 +194,6 @@ public class PlayScreen extends JPanel implements ActionListener {
             blinkHint(btn1, btn2);
         } else {
             System.out.println("Khong con cap nao de an.");
-            // shuffle(); // Mở comment này nếu muốn hết đường là tự động đảo
         }
     }
 
@@ -216,7 +240,7 @@ public class PlayScreen extends JPanel implements ActionListener {
             MainScreen main = (MainScreen) windown;
 //            main.stopTimer();
             main.setEnabled(false);
-            HonorScreen honorScreen = new HonorScreen(main, config, level);
+            HonorScreen honorScreen = new HonorScreen(main, config, level, this);
             honorScreen.setAlwaysOnTop(true);
             honorScreen.setVisible(true);
         }
@@ -228,10 +252,25 @@ public class PlayScreen extends JPanel implements ActionListener {
                 MainScreen main = (MainScreen) windown;
 //                main.stopTimer();
                 main.setEnabled(false);
-                LossScreen lossScreen = new LossScreen(main, config, level);
+                LossScreen lossScreen = new LossScreen(main, config, level, this);
                 lossScreen.setAlwaysOnTop(true);
                 lossScreen.setVisible(true);
             }
+    }
+    
+    public void addScore(int point, int reward){
+        this.TotalScore += point;
+        this.TotalScore += reward;
+        if(main != null){
+            main.updateScore(this.TotalScore);
+        }
+    }
+    
+    public void addcoin(int coin){
+        this.totalCoin += coin;
+        if(main != null){
+            main.updateCoin(totalCoin);
+        }
     }
 
 // hàm vẽ 
@@ -310,13 +349,15 @@ public class PlayScreen extends JPanel implements ActionListener {
         // Kiểm tra khớp cặp
         if (firstClick.getId() == currentCell.getId() && algorithm.checkPath(board, firstClick, currentCell)) {
             processMatch(currentCell, clickedBtn);
+            this.RewardCount++;
         } else {
             processMismatch(clickedBtn, isHidden);
+            this.RewardCount = 0;
         }
+        Reward(15);
     }
 //sự kiện nếu chạy đúng
     private void processMatch(Cell currentCell, RoundedIconButton clickedBtn) {
-       //âm thanh của sự đói khát
         //audioManager.playSoundEffect("/images/Sound/eated.wav");
         // ---> SỬA CÁCH GỌI ÂM THANH ĂN Ô TẠI ĐÂY <---
         java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
@@ -324,6 +365,9 @@ public class PlayScreen extends JPanel implements ActionListener {
             MainScreen main = (MainScreen) window;
             main.playSoundEffect("/Sound/eated.wav"); 
         }
+//Cộng diểm 
+        addScore(100, reward);
+        addcoin(TotalScore/10);
 // Vẽ đường đi
         drawPathOnOverlay();
 
@@ -332,6 +376,11 @@ public class PlayScreen extends JPanel implements ActionListener {
 
         // Xóa dữ liệu & ẩn UI
         CellPair RockketTarget = algorithm.removePair(firstClick, currentCell, board);
+        if(RockketTarget != null){
+            addScore(150, 0);// Cộng điểm nếu là tên lửa
+            addcoin(TotalScore/10);
+        }
+        
         firstBtn.setVisible(false);
         clickedBtn.setVisible(false);
         
@@ -340,9 +389,12 @@ public class PlayScreen extends JPanel implements ActionListener {
         //Hiệu ứng tên lửa
         if (matchedId == 1) { // ROCKET_ITEM_ID
             RocketAnimation.triggerRocketEffect(this, firstBtn, clickedBtn, RockketTarget);
+                addScore(50, 0);// Cộng điểm tên lửa sau khi bắn trúng mục tiêu
+                addcoin(TotalScore/10);
         }
 
         //KIỂM TRA THẮNG THUA (Đặt ở đây là chuẩn nhất)
+        
         checkGameState();
 
         firstClick = null;
@@ -354,10 +406,10 @@ public class PlayScreen extends JPanel implements ActionListener {
         if (isBoardEmpty()) {
             // Tính điểm dựa trên LevelType
             stopTimer();
-            stopAsianTimer();
-            int score = level.getNoP() * 10; 
+            stopAsianTimer(); 
             DTB.insertScore("tuan", level.getName(), score, 150);
             showHonorScreen();
+            
         } else if (!algorithm.hasAnyMatch(board)) {
             shuffle();
         }
@@ -370,6 +422,14 @@ public class PlayScreen extends JPanel implements ActionListener {
         firstClickBtn = null;
     }
    
+    public void Reward(int point){
+        if(this.RewardCount != 0){
+            this.reward+= point;
+        }
+        else{
+            this.reward = 0;
+        }
+    }
     
     public void stopTimer() {
         if (countdownTimer != null && countdownTimer.isRunning()) {
@@ -383,6 +443,13 @@ public class PlayScreen extends JPanel implements ActionListener {
     }  
     public void addTimer(int time){
         currentTime = currentTime + time;
+    }
+    
+    public int get_timeRemain(){
+        return currentTime;
+    }
+    public int get_TotalScore(){
+        return TotalScore;
     }
     
 public void initTimer(javax.swing.JSlider externalTimeline) {

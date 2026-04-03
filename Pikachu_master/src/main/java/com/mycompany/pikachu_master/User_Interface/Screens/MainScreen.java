@@ -12,6 +12,7 @@ import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
 //import com.mycompany.pikachu_master.User_Interface.Components.cus;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundStartScreen;
 import com.mycompany.pikachu_master.Utils.SoundLoad;
+import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 
 /**
@@ -35,6 +36,10 @@ public class MainScreen extends javax.swing.JFrame {
 
     int hintCount;
     int shuffleCount;
+    private int displayedScore = 0;
+    private int currentTotalScore = 0;
+    private int displayedCoin = 0;
+    private int currentTotalCoin = 0;
     
     private SoundLoad audioManager = new SoundLoad();
 
@@ -48,10 +53,7 @@ public class MainScreen extends javax.swing.JFrame {
         PointLabel.setForeground(textColor);
         coin.setForeground(textColor);
 
-        //level_point.setForeground(valueColor);
-        //point.setForeground(valueColor);
-        //coinLabel.setForeground(valueColor);
-
+        
         // 2. Vẽ nền "Chuẩn Game" cho cái khung topBarPanel (Nền đen trong suốt + Viền Vàng bo góc)
         topBarPanel.setBorder(new javax.swing.border.AbstractBorder() {
             @Override
@@ -125,7 +127,7 @@ public class MainScreen extends javax.swing.JFrame {
         //javax.swing.JOptionPane.showMessageDialog(this, "Hết giờ! Bạn đã thua cuộc.", "Game Over", javax.swing.JOptionPane.INFORMATION_MESSAGE);
        audioManager.stopBGM();
         this.setEnabled(false);
-        LossScreen loss = new LossScreen(this, config, level);
+        LossScreen loss = new LossScreen(this, config, level, play);
         loss.setAlwaysOnTop(true);
         loss.setVisible(true);
     }
@@ -135,7 +137,7 @@ public class MainScreen extends javax.swing.JFrame {
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         this.config = config;
         this.level = level;
-        this.play = new PlayScreen(config);
+        this.play = new PlayScreen(config, this);
         this.hintCount = 3;
         this.shuffleCount = 3;
         setContentPane(new BackgroundMain());
@@ -155,7 +157,8 @@ public class MainScreen extends javax.swing.JFrame {
         this.getContentPane().add(play);
         
         playMusicByLevel();
-        
+        resetScoreDisPlay();
+        resetCoinDisplay();
         //căn chỉnh vị trí.
         // Căn chỉnh vị trí và kích thước linh động cho bảng Pokemon
         // Căn chỉnh vị trí và Kích thước (Scale) động cho TOÀN BỘ màn hình
@@ -170,6 +173,62 @@ public class MainScreen extends javax.swing.JFrame {
             updateGameLayout(level);
         });
     }
+    
+        public void updateScore(int newScore) {
+            this.currentTotalScore = newScore;
+
+            // Tạo hiệu ứng nhảy số từ displayedScore đến currentTotalScore
+            javax.swing.Timer scoreTimer = new javax.swing.Timer(20, null);
+            scoreTimer.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+//                    displayedScore = 0;
+//                    PointLabel.setText("ĐIỂM: " + displayedScore);
+                    if (displayedScore < currentTotalScore) {
+                        displayedScore += 5; // Tốc độ tăng điểm
+                        if (displayedScore > currentTotalScore) displayedScore = currentTotalScore;
+                        PointLabel.setText("ĐIỂM: " + displayedScore);
+                    } else {
+                        scoreTimer.stop();
+                    }
+                }
+            });
+            scoreTimer.start();
+        }
+        
+        public void updateCoin(int newCoin){
+            this.currentTotalCoin = newCoin;
+
+            // Tạo hiệu ứng nhảy số từ displayedCoin đến currentTotalCoin
+            javax.swing.Timer scoreTimer = new javax.swing.Timer(20, null);
+            scoreTimer.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent e) {
+//                    displayedCoin = 0;
+//                    PointLabel.setText("ĐIỂM: " + displayedCoin);
+                    if (displayedCoin < currentTotalCoin) {
+                        displayedCoin += 5; // Tốc độ tăng điểm
+                        if (displayedCoin > currentTotalCoin) displayedCoin = currentTotalCoin;
+                        coin.setText("Vàng: " + displayedCoin);
+                    } else {
+                        scoreTimer.stop();
+                    }
+                }
+            });
+            scoreTimer.start();
+        }
+        
+        public void resetCoinDisplay(){
+            this.currentTotalCoin = 0;
+            this.displayedCoin = 0;
+            coin.setText("Vàng: " + displayedCoin);
+        }
+        
+        public void resetScoreDisPlay(){
+            this.currentTotalScore = 0;
+            this.displayedScore = 0;
+            PointLabel.setText("ĐIỂM: 0");
+        }
     
     private void playMusicByLevel() {
         // Lấy tên của Level hiện tại (AFRICA, ASIAN, EUROPE...)
@@ -296,13 +355,15 @@ public class MainScreen extends javax.swing.JFrame {
         this.config = newConfig;
         this.hintCount = 3;
         this.shuffleCount = 3;
-
+        
+        resetCoinDisplay();
+        resetScoreDisPlay();
         //xóa bảng hiện tại.
         if(play != null){
         this.getContentPane().remove(play);
         }
         // tạo bảng mới.
-        play = new PlayScreen(config);
+        play = new PlayScreen(config, this);
         this.getContentPane().add(play);
         play.initTimer(Timeline);
 

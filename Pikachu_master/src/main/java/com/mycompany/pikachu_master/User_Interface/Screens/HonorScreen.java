@@ -5,6 +5,7 @@
 package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
+import com.mycompany.pikachu_master.Controller.PlayScreen;
 import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundHonorScreen;
 import com.mycompany.pikachu_master.Utils.Button_Icon;
@@ -29,10 +30,14 @@ public class HonorScreen extends javax.swing.JFrame {
     MainScreen main;
     GameConfig config;
     LevelType level;
+    PlayScreen play;
+    
+    private int displayedScore = 0;
+    private int currentTotalScore = 0;
     
     private SoundLoad audioManager = new SoundLoad();
 
-    public HonorScreen(MainScreen main, GameConfig config, LevelType level) {
+    public HonorScreen(MainScreen main, GameConfig config, LevelType level, PlayScreen play) {
         this.setUndecorated(true);
         setContentPane(new BackgroundHonorScreen());
         initComponents();
@@ -44,8 +49,11 @@ public class HonorScreen extends javax.swing.JFrame {
         this.main = main;
         this.config = config;
         this.level = level;
+        this.play = play;
         this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setEnabled(true);
+        
+        this.updateScore(play.get_TotalScore());
         this.main.stopMusic();
         audioManager.playBGM("/Sound/Winner.wav");
         // Bắt sự kiện bấm nút X
@@ -82,6 +90,45 @@ public class HonorScreen extends javax.swing.JFrame {
         newButton.setForeground(java.awt.Color.WHITE);
         
      }
+     
+public void updateScore(int newScore) {
+    // 1. Tính tổng điểm cuối cùng
+    this.currentTotalScore = newScore + (play.get_timeRemain() * 10);
+    this.displayedScore = 0;
+
+    // 2. Thiết lập cấu hình thời gian
+    final int TotalAnimationTime = 2000;
+    final int TimeDelay = 20;            
+    
+    // 3. Tính toán số bước nhảy và giá trị mỗi bước
+    int totalSteps = TotalAnimationTime / TimeDelay; // Tổng số lần Timer sẽ chạy
+    // Mỗi bước cộng bao nhiêu điểm (dùng số thực để tránh mất mát dữ liệu khi chia)
+    final double incrementPerStep = (double) currentTotalScore / totalSteps;
+
+    javax.swing.Timer scoreTimer = new javax.swing.Timer(TimeDelay, null);
+    scoreTimer.addActionListener(new java.awt.event.ActionListener() {
+        private int currentStep = 0;
+
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            currentStep++;
+            
+            if (currentStep <= totalSteps) {
+                displayedScore = (int) (currentStep * incrementPerStep);
+                if (displayedScore > currentTotalScore) 
+                    displayedScore = currentTotalScore;
+                
+                scoreLabel.setText(String.valueOf(displayedScore));
+            } else {
+                // Bước cuối cùng: Chốt hạ con số chính xác nhất
+                scoreLabel.setText(String.valueOf(currentTotalScore));
+                ((javax.swing.Timer) e.getSource()).stop();
+            }
+        }
+    });
+    
+    scoreTimer.start();
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -125,8 +172,8 @@ public class HonorScreen extends javax.swing.JFrame {
         getContentPane().add(newButton, gridBagConstraints);
 
         scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 48)); // NOI18N
+        scoreLabel.setForeground(new java.awt.Color(255, 255, 0));
         scoreLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        scoreLabel.setText("9999");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
