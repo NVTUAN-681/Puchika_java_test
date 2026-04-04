@@ -77,9 +77,7 @@ public class ImageLoad {
             path = PATH_2;       // Dark side
         } else if (loaiAnh == 3) {
             path = PATH_3;       // Light side
-        } else if (loaiAnh == 4) {
-            path = PATH_4;       // Light_Dark
-        }
+        } 
         
         URL imgURL = ImageLoad.class.getResource(path);
         try {

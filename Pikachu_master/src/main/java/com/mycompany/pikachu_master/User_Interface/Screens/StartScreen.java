@@ -6,6 +6,7 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
 import com.mycompany.pikachu_master.Controller.PlayScreen;
+import com.mycompany.pikachu_master.Data.gameDAO;
 import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundStartScreen;
 import com.mycompany.pikachu_master.Utils.ImageLoad;
@@ -26,6 +27,7 @@ public class StartScreen extends javax.swing.JFrame {
     private GameConfig config;
     private LevelType level;
     private PlayScreen play;
+    private gameDAO DTB;
 
     private SoundLoad audioManager = new SoundLoad();
 
@@ -36,6 +38,7 @@ public class StartScreen extends javax.swing.JFrame {
         this.config = config;
         this.level = level;
         this.play = play;
+        this.DTB = new gameDAO();
         
 // tải ảnh trước khi bắt đầu trò chơi        
         ImageLoad.loadAllImagesPika();
@@ -43,7 +46,7 @@ public class StartScreen extends javax.swing.JFrame {
         setupAllButtonIcons();
         
 // GỌI NHẠC NỀN KHI VỪA MỞ MÀN HÌNH CHÍNH LÊN
-        audioManager.playBGM("/Sound/SoundStart.wav");
+        audioManager.playBGM("/sound/SoundBackground/SoundStart.wav");
     }
 
     public void setLevel(String Level) {
@@ -185,15 +188,22 @@ public class StartScreen extends javax.swing.JFrame {
 // Phát tiếng click chuột
         audioManager.stopBGM();
         audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
-        if (com.mycompany.pikachu_master.Model.ThemeManager.currentTheme == null) {
-// Cho mặc định là giao diện Sáng nếu chưa chọn
-            com.mycompany.pikachu_master.Model.ThemeManager.currentTheme = "LIGHT"; 
-        }
-        MainScreen Main = new MainScreen(config, this.level);
-        Main.setVisible(true);
-        javax.swing.SwingUtilities.invokeLater(() -> {
+        GameConfig saveConfig = DTB.getSavedGame("tuan");
+        if(saveConfig != null){
+            Next_or_NewScreen Screen = new Next_or_NewScreen(this.config, saveConfig);
+            Screen.setVisible(true);
             this.dispose();
-        });
+        }else{
+            if (com.mycompany.pikachu_master.Model.ThemeManager.currentTheme == null) {
+    // Cho mặc định là giao diện Sáng nếu chưa chọn
+                com.mycompany.pikachu_master.Model.ThemeManager.currentTheme = "LIGHT"; 
+            }
+            MainScreen Main = new MainScreen(config, this.level);
+            Main.setVisible(true);
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                this.dispose();
+            });
+        }
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void maxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxButtonActionPerformed
@@ -259,8 +269,9 @@ public class StartScreen extends javax.swing.JFrame {
 
         /* Create and display the form */
         LevelType level = LevelType.START;
-        PlayScreen play = null;
+
         GameConfig config = new GameConfig(level.getLevel());
+        PlayScreen play = new PlayScreen(config, null);
         java.awt.EventQueue.invokeLater(() -> new StartScreen(config, level, play).setVisible(true));
     }
 

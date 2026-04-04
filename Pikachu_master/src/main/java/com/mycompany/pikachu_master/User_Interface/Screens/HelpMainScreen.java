@@ -70,42 +70,48 @@ public class HelpMainScreen extends javax.swing.JFrame {
         this.darkOverlay.setVisible(true); 
         this.setAlwaysOnTop(true);
         
-         // --- BẮT ĐẦU: ĐỘ NÚT < THÀNH BO GÓC TRONG SUỐT ---
+        // --- BẮT ĐẦU: ĐỘ NÚT < THÀNH BO GÓC TRONG SUỐT ---
         exit6.setContentAreaFilled(false);
         exit6.setFocusPainted(false);
         exit6.setBorderPainted(false);
         exit6.setOpaque(false);
-        exit6.setForeground(java.awt.Color.WHITE); // Chữ màu trắng
-        exit6.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); // Chữ to rõ
+        exit6.setRolloverEnabled(true);
+        exit6.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); 
 
-        // Ghi đè giao diện UI để tự vẽ hình bo góc
         exit6.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-                // Bật khử răng cưa cho góc bo mượt mà
                 g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
                 javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
                 
-                // Hiệu ứng đổi màu nền khi di chuột / bấm
                 if (b.getModel().isPressed()) {
-                    g2.setColor(new java.awt.Color(255, 255, 255, 100)); // Trắng mờ khi bấm
+                    g2.setColor(new java.awt.Color(200, 200, 200, 255)); 
                 } else if (b.getModel().isRollover()) {
-                    g2.setColor(new java.awt.Color(255, 255, 255, 50)); // Trắng rất mờ khi chuột lướt qua
+                    g2.setColor(new java.awt.Color(255, 255, 255, 230)); 
                 } else {
-                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); // Nền đen trong suốt lúc bình thường
+                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); 
                 }
                 
-                // Vẽ nền bo góc (Độ cong 20px)
                 g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
-                
-                // Vẽ thêm cái viền trắng mỏng cho sang trọng
                 g2.setColor(java.awt.Color.WHITE);
                 g2.setStroke(new java.awt.BasicStroke(1.5f));
                 g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
-                
                 g2.dispose();
-                super.paint(g, c); // Ra lệnh vẽ cái chữ "<" đè lên trên nền
+                super.paint(g, c); 
+            }
+
+            @Override
+            protected void paintText(java.awt.Graphics g, javax.swing.JComponent c, java.awt.Rectangle textRect, String text) {
+                javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+                if (b.getModel().isRollover() || b.getModel().isPressed()) {
+                    g.setColor(new java.awt.Color(40, 40, 40)); 
+                } else {
+                    g.setColor(java.awt.Color.WHITE); 
+                }
+                java.awt.FontMetrics fm = g.getFontMetrics(c.getFont());
+                int mnemonicIndex = b.getDisplayedMnemonicIndex();
+                javax.swing.plaf.basic.BasicGraphicsUtils.drawStringUnderlineCharAt(g, text, mnemonicIndex, textRect.x, textRect.y + fm.getAscent());
             }
         });
         // --- KẾT THÚC ĐỘ NÚT ---

@@ -76,8 +76,7 @@ public class LossScreen extends javax.swing.JFrame {
                 g2.dispose();
             }
         });
-        //this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); 
-        ImageLoad.loadBg("PAUSE_BTN", 4, 250, 40, 10);
+     
         setupAllButtonIcons();
         
         this.setMinimumSize(new java.awt.Dimension(300, 400));
@@ -97,7 +96,7 @@ public class LossScreen extends javax.swing.JFrame {
         //this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         
         this.main.stopMusic();
-        audioManager.playBGM("/Sound/Loss.wav");
+        audioManager.playBGM("/sound/SoundEndMain/Loss.wav");
         this.updateScore(play.get_TotalScore());
         
         this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -150,28 +149,70 @@ public class LossScreen extends javax.swing.JFrame {
     scoreTimer.start();
 }
     
-     private void setupAllButtonIcons() {
-        // ---> 1. THUỐC ĐẶC TRỊ TẬT KÉO DÃN LỆCH CHỮ CỦA NETBEANS <---
+    private void setupAllButtonIcons() {
         java.awt.GridBagLayout layout = (java.awt.GridBagLayout) getContentPane().getLayout();
         javax.swing.AbstractButton[] btns = {exitButton, retryButton};
         
         for (javax.swing.AbstractButton btn : btns) {
             java.awt.GridBagConstraints gbc = layout.getConstraints(btn);
-            gbc.fill = java.awt.GridBagConstraints.NONE; // Cấm tiệt việc tự kéo dãn nút
-            gbc.ipadx = 0; // Xóa sạch cái lề ảo 150px mà NetBeans tự nhét vào
+            gbc.fill = java.awt.GridBagConstraints.NONE; 
+            gbc.ipadx = 0; 
+            gbc.ipady = 0; 
             layout.setConstraints(btn, gbc);
-        }
-        
-        
-       Button_Icon.applyCachedIcons(exitButton, "THOÁT", "PAUSE_BTN");
-       Button_Icon.applyCachedIcons(retryButton, "VÁN MỚI", "PAUSE_BTN");
-       
-       exitButton.setForeground(java.awt.Color.WHITE);
-        retryButton.setForeground(java.awt.Color.WHITE);
-        
-     }
-        
+            
+            java.awt.Dimension fixedSize = new java.awt.Dimension(300, 60);
+            btn.setPreferredSize(fixedSize);
+            btn.setMinimumSize(fixedSize); 
+            btn.setMaximumSize(fixedSize); 
+            
+            btn.setContentAreaFilled(false);
+            btn.setFocusPainted(false);
+            btn.setBorderPainted(false);
+            btn.setOpaque(false);
+            
+            btn.setForeground(new java.awt.Color(255, 255, 255)); 
 
+            btn.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    btn.setForeground(new java.awt.Color(40, 40, 40)); 
+                }
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    btn.setForeground(new java.awt.Color(255, 255, 255)); 
+                }
+            });
+
+            btn.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+                @Override
+                public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+                    java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                    g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                    javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+
+                    if (b.getModel().isPressed()) {
+                        g2.setColor(new java.awt.Color(200, 200, 200, 255)); 
+                    } else if (b.getModel().isRollover()) {
+                        g2.setColor(new java.awt.Color(255, 255, 255, 230)); 
+                    } else {
+                        g2.setColor(new java.awt.Color(0, 0, 0, 150)); 
+                    }
+
+                    g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
+                    g2.setColor(java.awt.Color.WHITE);
+                    g2.setStroke(new java.awt.BasicStroke(1.5f));
+                    g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
+
+                    g2.dispose();
+                    super.paint(g, c); 
+                }
+            });
+        }
+          
+        exitButton.setText("THOÁT");
+        retryButton.setText("VÁN MỚI");
+     }
+       
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -189,6 +230,7 @@ public class LossScreen extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        retryButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         retryButton.setText("VÁN MỚI");
         retryButton.setPreferredSize(new java.awt.Dimension(150, 30));
         retryButton.addActionListener(this::retryButtonActionPerformed);
@@ -201,6 +243,7 @@ public class LossScreen extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(130, 30, 0, 30);
         getContentPane().add(retryButton, gridBagConstraints);
 
+        exitButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         exitButton.setText("THOÁT");
         exitButton.setPreferredSize(new java.awt.Dimension(150, 30));
         exitButton.addActionListener(this::exitButtonActionPerformed);
@@ -213,10 +256,12 @@ public class LossScreen extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 30, 116, 30);
         getContentPane().add(exitButton, gridBagConstraints);
 
-        scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 48)); // NOI18N
+        scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 38)); // NOI18N
         scoreLabel.setForeground(new java.awt.Color(255, 255, 0));
         scoreLabel.setText("9999");
-        getContentPane().add(scoreLabel, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(138, 110, 0, 0);
+        getContentPane().add(scoreLabel, gridBagConstraints);
 
         setSize(new java.awt.Dimension(464, 658));
         setLocationRelativeTo(null);
@@ -239,6 +284,7 @@ public class LossScreen extends javax.swing.JFrame {
         StartScreen pika = new StartScreen(config, level, play);
         pika.setLevel(config.GetLevel());
         pika.setVisible(true);
+        main.dispose();
         this.dispose();
     }//GEN-LAST:event_exitButtonActionPerformed
     

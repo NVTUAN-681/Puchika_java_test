@@ -364,43 +364,51 @@ public class LevelScreen extends javax.swing.JFrame {
         Button_Icon.applyCachedIcons(normalButton, "NORMAL", "LIGHT_BTN");
         Button_Icon.applyCachedIcons(hardButton, "HARD", "LIGHT_BTN");
 
-       exitButton3.setContentAreaFilled(false);
+       // --- BẮT ĐẦU: ĐỘ NÚT < THÀNH BO GÓC TRONG SUỐT ---
+        exitButton3.setContentAreaFilled(false);
         exitButton3.setFocusPainted(false);
         exitButton3.setBorderPainted(false);
         exitButton3.setOpaque(false);
-        exitButton3.setForeground(java.awt.Color.WHITE); // Chữ màu trắng
-        exitButton3.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); // Chữ to rõ
+        exitButton3.setRolloverEnabled(true); 
+        exitButton3.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); 
 
-        // Ghi đè giao diện UI để tự vẽ hình bo góc
         exitButton3.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-                // Bật khử răng cưa cho góc bo mượt mà
                 g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
                 javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
                 
-                // Hiệu ứng đổi màu nền khi di chuột / bấm
                 if (b.getModel().isPressed()) {
-                    g2.setColor(new java.awt.Color(255, 255, 255, 100)); // Trắng mờ khi bấm
+                    g2.setColor(new java.awt.Color(200, 200, 200, 255)); 
                 } else if (b.getModel().isRollover()) {
-                    g2.setColor(new java.awt.Color(255, 255, 255, 50)); // Trắng rất mờ khi chuột lướt qua
+                    g2.setColor(new java.awt.Color(255, 255, 255, 230)); 
                 } else {
-                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); // Nền đen trong suốt lúc bình thường
+                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); 
                 }
                 
-                // Vẽ nền bo góc (Độ cong 20px)
                 g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
-                
-                // Vẽ thêm cái viền trắng mỏng cho sang trọng
                 g2.setColor(java.awt.Color.WHITE);
                 g2.setStroke(new java.awt.BasicStroke(1.5f));
                 g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
-                
                 g2.dispose();
-                super.paint(g, c); // Ra lệnh vẽ cái chữ "<" đè lên trên nền
+                super.paint(g, c); 
+            }
+
+            @Override
+            protected void paintText(java.awt.Graphics g, javax.swing.JComponent c, java.awt.Rectangle textRect, String text) {
+                javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+                if (b.getModel().isRollover() || b.getModel().isPressed()) {
+                    g.setColor(new java.awt.Color(40, 40, 40)); 
+                } else {
+                    g.setColor(java.awt.Color.WHITE); 
+                }
+                java.awt.FontMetrics fm = g.getFontMetrics(c.getFont());
+                int mnemonicIndex = b.getDisplayedMnemonicIndex();
+                javax.swing.plaf.basic.BasicGraphicsUtils.drawStringUnderlineCharAt(g, text, mnemonicIndex, textRect.x, textRect.y + fm.getAscent());
             }
         });
+        // --- KẾT THÚC ĐỘ NÚT ---
     }
 
     /**
@@ -551,7 +559,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void africaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_africaButtonActionPerformed
         // TODO add your handling code here:
         //SoundLoad audioManager = new SoundLoad();
-        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
         start.setLevel("AFRICA");
         start.UpdateLevel("AFRICA");
         start.setGameTheme(this.selectedSide);
@@ -562,7 +570,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void asianButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_asianButtonActionPerformed
         // TODO add your handling code here:
         //SoundLoad audioManager = new SoundLoad();
-        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
         start.setLevel("ASIAN");
         start.UpdateLevel("ASIAN");
         start.setGameTheme(this.selectedSide);
@@ -573,7 +581,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void europeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_europeButtonActionPerformed
         // TODO add your handling code here:
         //SoundLoad audioManager = new SoundLoad();
-        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
         start.setLevel("EUROPE");
         start.UpdateLevel("EUROPE");
         start.setGameTheme(this.selectedSide);
@@ -585,7 +593,7 @@ public class LevelScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
         // 1. Thêm tiếng click chuột
         //SoundLoad audioManager = new SoundLoad();
-        audioManager.playSoundEffect("/Sound/SoundTap/tap.wav"); // <--- NHỚ THAY TÊN FILE
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav"); // <--- NHỚ THAY TÊN FILE
 
         // 2. Kiểm tra trạng thái hiện tại
         if (!this.selectedSide.equals("NONE")) {
@@ -639,7 +647,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void easyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_easyButtonActionPerformed
         // TODO add your handling code here:
         //SoundLoad audioManager = new SoundLoad();
-        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
         start.setLevel("EASY");
         start.UpdateLevel("EASY");
         start.setGameTheme(this.selectedSide);
@@ -650,7 +658,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void normalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_normalButtonActionPerformed
         // TODO add your handling code here:
         //SoundLoad audioManager = new SoundLoad();
-        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
         start.setLevel("NORMAL");
         start.UpdateLevel("NORMAL");
         start.setGameTheme(this.selectedSide);
@@ -661,7 +669,7 @@ public class LevelScreen extends javax.swing.JFrame {
     private void hardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardButtonActionPerformed
         // TODO add your handling code here:
         //SoundLoad audioManager = new SoundLoad();
-        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
         start.setLevel("HARD");
         start.UpdateLevel("HARD");
         start.setGameTheme(this.selectedSide);

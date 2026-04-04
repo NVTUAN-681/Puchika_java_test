@@ -62,7 +62,10 @@ public class RocketAnimation {
 
         main.getLayeredPane().add(rocket1, JLayeredPane.DRAG_LAYER);
         main.getLayeredPane().add(rocket2, JLayeredPane.DRAG_LAYER);
-
+        
+        // ---> THÊM HIỆU ỨNG: Phát âm thanh khi tên lửa đang BAY
+        main.playSoundEffect("/sound/SoundRocket/RocketFly.wav");
+        
         playScreen.setProcessingMismatch(true); 
 
         int totalFrames = 35; 
@@ -79,9 +82,11 @@ public class RocketAnimation {
 
                 rocket1.setLocation((int) (s1.x + (t1.x - s1.x) * progress), (int) (s1.y + (t1.y - s1.y) * progress));
                 rocket2.setLocation((int) (s2.x + (t2.x - s2.x) * progress), (int) (s2.y + (t2.y - s2.y) * progress));
-
+                //Ten lửa đến đích
                 if (currentFrame >= totalFrames) {
                     animTimer.stop();
+                    
+                    main.playSoundEffect("/sound/SoundRocket/RocketBoom.wav");
                     
                     main.getLayeredPane().remove(rocket1);
                     main.getLayeredPane().remove(rocket2);

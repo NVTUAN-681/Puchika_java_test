@@ -7,6 +7,9 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 //import static com.mycompany.pikachu_master.User_Interface.Screens.HighScoreScreen.main;
 //import static com.mycompany.pikachu_master.User_Interface.Screens.MainScreen.main;
 //import static com.mycompany.pikachu_master.User_Interface.Screens.StartScreen.main;
+import com.mycompany.pikachu_master.Controller.GameConfig;
+import com.mycompany.pikachu_master.Data.gameDAO;
+import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.Utils.ImageLoad;
 import com.mycompany.pikachu_master.Utils.SoundLoad;
 import java.awt.geom.RoundRectangle2D;
@@ -25,13 +28,23 @@ public class Next_or_NewScreen extends javax.swing.JFrame {
      */
     private SoundLoad audioManager = new SoundLoad();
     private final JWindow darkOverlay;
-    public Next_or_NewScreen() {
+    
+    private GameConfig configNew;
+    private GameConfig configSaved;
+    private LevelType level;
+            
+    public Next_or_NewScreen(GameConfig configNew, GameConfig configSave) {                
+        setUndecorated(true);
+        this.configNew = configNew;
+        this.configSaved = configSave;
+
         initComponents();
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
         @Override
         public void componentResized(java.awt.event.ComponentEvent evt) {
-          
-            setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 40, 40));
+            if(isUndecorated()){
+                setShape(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 40, 40));
+            }
         }
     });
          javax.swing.JPanel contentPane = (javax.swing.JPanel) this.getContentPane();
@@ -55,13 +68,26 @@ public class Next_or_NewScreen extends javax.swing.JFrame {
         ImageLoad.loadBg("PAUSE_BTN", 4, 300, 60, 10);
         
         
-      this.darkOverlay = new javax.swing.JWindow(this);
-        this.darkOverlay.setBounds(this.getBounds()); 
-        this.darkOverlay.setBackground(new java.awt.Color(0, 0, 0, 180)); 
-        this.darkOverlay.addMouseListener(new java.awt.event.MouseAdapter() {}); 
-        this.darkOverlay.setVisible(true); 
+        // Lấy kích thước toàn màn hình
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        this.darkOverlay = new javax.swing.JWindow(); // Không để owner là 'this' nếu muốn quản lý layer thủ công
+        this.darkOverlay.setSize(screenSize);
+        this.darkOverlay.setLocation(0, 0);
+        this.darkOverlay.setBackground(new java.awt.Color(0, 0, 0, 180));
+        this.darkOverlay.setVisible(true);
+
+        // Đảm bảo Frame chính nằm trên cái lớp phủ đen
+        this.toFront(); 
         this.setAlwaysOnTop(true);
     }
+        
+        private void OpenMainScreen(GameConfig config){
+            MainScreen Main = new MainScreen(config, LevelType.getByName(config.GetLevel()));
+            Main.setVisible(true);
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                this.dispose();
+            });
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -122,12 +148,15 @@ public class Next_or_NewScreen extends javax.swing.JFrame {
 
     private void yes_I_doButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yes_I_doButtonActionPerformed
         // TODO add your handling code here:
-        audioManager.playSoundEffect("sound/SoundTap/tap.wav");
+        OpenMainScreen(configSaved);
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
     }//GEN-LAST:event_yes_I_doButtonActionPerformed
 
     private void No_I_dontButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_No_I_dontButtonActionPerformed
         // TODO add your handling code here:
-        audioManager.playSoundEffect("sound/SoundTap/tap.wav");
+        new gameDAO().deleteSaveGame("tuan");  
+        OpenMainScreen(configNew);
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
     }//GEN-LAST:event_No_I_dontButtonActionPerformed
 
     /**

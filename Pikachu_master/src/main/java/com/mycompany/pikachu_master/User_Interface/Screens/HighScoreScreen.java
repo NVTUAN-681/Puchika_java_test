@@ -6,7 +6,7 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Utils.SoundLoad;
 import com.mycompany.pikachu_master.Controller.PlayScreen;
-import com.mycompany.pikachu_master.Data.ScoreDAO;
+import com.mycompany.pikachu_master.Data.gameDAO;
 import java.awt.event.WindowEvent;
 import java.awt.geom.RoundRectangle2D;
 
@@ -25,7 +25,7 @@ public class HighScoreScreen extends javax.swing.JFrame {
     private SoundLoad audioManager = new SoundLoad();
     PlayScreen play;
     MainScreen main;
-    ScoreDAO DTB = new ScoreDAO();
+    gameDAO DTB = new gameDAO();
 
     public HighScoreScreen(StartScreen start, PlayScreen play) {
         this.setUndecorated(true);
@@ -77,37 +77,43 @@ public class HighScoreScreen extends javax.swing.JFrame {
         exitButton5.setFocusPainted(false);
         exitButton5.setBorderPainted(false);
         exitButton5.setOpaque(false);
-        exitButton5.setForeground(java.awt.Color.WHITE); // Chữ màu trắng
-        exitButton5.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); // Chữ to rõ
+        exitButton5.setRolloverEnabled(true); // Bật nhận diện lướt chuột
+        exitButton5.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); 
 
-        // Ghi đè giao diện UI để tự vẽ hình bo góc
         exitButton5.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
             @Override
             public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-                // Bật khử răng cưa cho góc bo mượt mà
                 g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
                 javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
                 
-                // Hiệu ứng đổi màu nền khi di chuột / bấm
                 if (b.getModel().isPressed()) {
-                    g2.setColor(new java.awt.Color(255, 255, 255, 100)); // Trắng mờ khi bấm
+                    g2.setColor(new java.awt.Color(200, 200, 200, 255)); 
                 } else if (b.getModel().isRollover()) {
-                    g2.setColor(new java.awt.Color(255, 255, 255, 50)); // Trắng rất mờ khi chuột lướt qua
+                    g2.setColor(new java.awt.Color(255, 255, 255, 230)); // Nền trắng đặc để nổi chữ
                 } else {
-                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); // Nền đen trong suốt lúc bình thường
+                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); 
                 }
                 
-                // Vẽ nền bo góc (Độ cong 20px)
                 g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
-                
-                // Vẽ thêm cái viền trắng mỏng cho sang trọng
                 g2.setColor(java.awt.Color.WHITE);
                 g2.setStroke(new java.awt.BasicStroke(1.5f));
                 g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
-                
                 g2.dispose();
-                super.paint(g, c); // Ra lệnh vẽ cái chữ "<" đè lên trên nền
+                super.paint(g, c); 
+            }
+
+            @Override
+            protected void paintText(java.awt.Graphics g, javax.swing.JComponent c, java.awt.Rectangle textRect, String text) {
+                javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+                if (b.getModel().isRollover() || b.getModel().isPressed()) {
+                    g.setColor(new java.awt.Color(40, 40, 40)); 
+                } else {
+                    g.setColor(java.awt.Color.WHITE); 
+                }
+                java.awt.FontMetrics fm = g.getFontMetrics(c.getFont());
+                int mnemonicIndex = b.getDisplayedMnemonicIndex();
+                javax.swing.plaf.basic.BasicGraphicsUtils.drawStringUnderlineCharAt(g, text, mnemonicIndex, textRect.x, textRect.y + fm.getAscent());
             }
         });
         // --- KẾT THÚC ĐỘ NÚT ---
@@ -164,7 +170,7 @@ public class HighScoreScreen extends javax.swing.JFrame {
 
     private void exitButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton5ActionPerformed
         // TODO add your handling code here:
-        audioManager.playSoundEffect("sound/SoundTap/tap.wav");
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
         start.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_exitButton5ActionPerformed

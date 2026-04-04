@@ -79,8 +79,7 @@ public class HonorScreen extends javax.swing.JFrame {
                 g2.dispose();
             }
         });
-          
-        ImageLoad.loadBg("PAUSE_BTN", 4, 250, 40, 10);
+    
         setupAllButtonIcons();
         
         this.setMinimumSize(new java.awt.Dimension(300, 400));
@@ -128,25 +127,68 @@ public class HonorScreen extends javax.swing.JFrame {
         });
     }
     
-     private void setupAllButtonIcons() {
-        // ---> 1. THUỐC ĐẶC TRỊ TẬT KÉO DÃN LỆCH CHỮ CỦA NETBEANS <---
+    private void setupAllButtonIcons() {
         java.awt.GridBagLayout layout = (java.awt.GridBagLayout) getContentPane().getLayout();
         javax.swing.AbstractButton[] btns = {exitButton, newButton};
         
         for (javax.swing.AbstractButton btn : btns) {
             java.awt.GridBagConstraints gbc = layout.getConstraints(btn);
-            gbc.fill = java.awt.GridBagConstraints.NONE; // Cấm tiệt việc tự kéo dãn nút
-            gbc.ipadx = 0; // Xóa sạch cái lề ảo 150px mà NetBeans tự nhét vào
+            gbc.fill = java.awt.GridBagConstraints.NONE; 
+            gbc.ipadx = 0; 
+            gbc.ipady = 0; 
             layout.setConstraints(btn, gbc);
+            
+            java.awt.Dimension fixedSize = new java.awt.Dimension(300, 60);
+            btn.setPreferredSize(fixedSize);
+            btn.setMinimumSize(fixedSize); 
+            btn.setMaximumSize(fixedSize); 
+            
+            btn.setContentAreaFilled(false);
+            btn.setFocusPainted(false);
+            btn.setBorderPainted(false);
+            btn.setOpaque(false);
+            
+            btn.setForeground(new java.awt.Color(255, 255, 255)); 
+
+            btn.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent e) {
+                    btn.setForeground(new java.awt.Color(40, 40, 40)); 
+                }
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent e) {
+                    btn.setForeground(new java.awt.Color(255, 255, 255)); 
+                }
+            });
+
+            btn.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+                @Override
+                public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+                    java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                    g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                    javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+
+                    if (b.getModel().isPressed()) {
+                        g2.setColor(new java.awt.Color(200, 200, 200, 255)); 
+                    } else if (b.getModel().isRollover()) {
+                        g2.setColor(new java.awt.Color(255, 255, 255, 230)); 
+                    } else {
+                        g2.setColor(new java.awt.Color(0, 0, 0, 150)); 
+                    }
+
+                    g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
+                    g2.setColor(java.awt.Color.WHITE);
+                    g2.setStroke(new java.awt.BasicStroke(1.5f));
+                    g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
+
+                    g2.dispose();
+                    super.paint(g, c); 
+                }
+            });
         }
         
-        
-       Button_Icon.applyCachedIcons(exitButton, "THOÁT", "PAUSE_BTN");
-       Button_Icon.applyCachedIcons( newButton, "VÁN MỚI", "PAUSE_BTN");
-       
-       exitButton.setForeground(java.awt.Color.WHITE);
-        newButton.setForeground(java.awt.Color.WHITE);
-        
+        exitButton.setText("THOÁT");
+        newButton.setText("VÁN MỚI");
      }
      
         public void updateScore(int newScore) {
@@ -205,6 +247,7 @@ public class HonorScreen extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        exitButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         exitButton.setText("THOÁT");
         exitButton.setPreferredSize(new java.awt.Dimension(150, 30));
         exitButton.addActionListener(this::exitButtonActionPerformed);
@@ -217,6 +260,7 @@ public class HonorScreen extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(6, 30, 58, 30);
         getContentPane().add(exitButton, gridBagConstraints);
 
+        newButton.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         newButton.setText("VÁN MỚI");
         newButton.setPreferredSize(new java.awt.Dimension(150, 30));
         newButton.addActionListener(this::newButtonActionPerformed);
@@ -226,10 +270,10 @@ public class HonorScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 70;
         gridBagConstraints.ipady = 7;
-        gridBagConstraints.insets = new java.awt.Insets(100, 30, 0, 30);
+        gridBagConstraints.insets = new java.awt.Insets(150, 30, 0, 30);
         getContentPane().add(newButton, gridBagConstraints);
 
-        scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 48)); // NOI18N
+        scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 40)); // NOI18N
         scoreLabel.setForeground(new java.awt.Color(255, 255, 0));
         scoreLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -238,7 +282,7 @@ public class HonorScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 118;
         gridBagConstraints.ipady = 29;
-        gridBagConstraints.insets = new java.awt.Insets(121, 74, 0, 76);
+        gridBagConstraints.insets = new java.awt.Insets(118, 74, 0, 76);
         getContentPane().add(scoreLabel, gridBagConstraints);
 
         setSize(new java.awt.Dimension(464, 658));

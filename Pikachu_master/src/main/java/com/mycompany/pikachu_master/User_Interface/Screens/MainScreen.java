@@ -6,6 +6,7 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.Controller.GameConfig;
 import com.mycompany.pikachu_master.Controller.PlayScreen;
+import com.mycompany.pikachu_master.Data.gameDAO;
 import com.mycompany.pikachu_master.Effect.PathOverlay;
 import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
@@ -27,11 +28,10 @@ public class MainScreen extends javax.swing.JFrame {
      *
      * @param config
      */
-    
-    
     GameConfig config;
     PlayScreen play;
     LevelType level;
+    gameDAO DTB;
 
     int hintCount;
     int shuffleCount;
@@ -39,7 +39,7 @@ public class MainScreen extends javax.swing.JFrame {
     private int currentTotalScore = 0;
     private int displayedCoin = 0;
     private int currentTotalCoin = 0;
-    
+
     private SoundLoad audioManager = new SoundLoad();
     
     public MainScreen(GameConfig config, LevelType level) {
@@ -50,6 +50,7 @@ public class MainScreen extends javax.swing.JFrame {
         this.play = new PlayScreen(config, this);
         this.hintCount = 3;
         this.shuffleCount = 3;
+        this.DTB = new gameDAO();
 
         // --- THÊM CỤM NÀY ĐỂ MÀN CHƠI TỰ CHỌN ĐÚNG NỀN ---
         javax.swing.JPanel dynamicBg = new javax.swing.JPanel() {
@@ -68,18 +69,18 @@ public class MainScreen extends javax.swing.JFrame {
         initComponents();
         this.setMinimumSize(new java.awt.Dimension(800, 600));
         play.initTimer(this.Timeline);
-        
+
         // KÍCH HOẠT LỚP VẼ ĐƯỜNG ĐI
         PathOverlay pathOverlay = new PathOverlay();
         this.setGlassPane(pathOverlay);
         pathOverlay.setVisible(true);
-        
+
         Timeline.setOpaque(false);
         Timeline.setEnabled(false);
         styleTopBar();
         this.getContentPane().setLayout(null);
         this.getContentPane().add(play);
-        
+
         playMusicByLevel();
         resetScoreDisPlay();
         resetCoinDisplay(play.get_Totalcoin());
@@ -93,119 +94,207 @@ public class MainScreen extends javax.swing.JFrame {
         // Lấy trước kích thước màn hình PC của bạn
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(screenSize); // Ép kích thước ngay lập tức
-        
+
         // Ra lệnh dàn layout TRƯỚC KHI màn hình được setVisible
         updateGameLayout(level);
     }
+    
+    
+private void styleTopBar() {
+        // --- 1. KHỞI TẠO LẠI LABEL VỚI NỀN GIỐNG TOPBAR (MÀU ĐEN MỜ) ---
+        topBarPanel.remove(coin);
+        topBarPanel.remove(ScoreLabel);
 
-// ---> THÊM HÀM NÀY VÀO ĐỂ TRANG TRÍ THANH TOP BAR <---
-    private void styleTopBar() {
-        // 1. Chỉnh màu chữ: Tiêu đề màu Trắng, Chỉ số màu Vàng Gold
-        java.awt.Color textColor = java.awt.Color.WHITE;
-        java.awt.Color valueColor = new java.awt.Color(255, 215, 0); // Vàng Gold
+        coin = new javax.swing.JLabel("VÀNG: 0") {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                // Nền đen mờ (giống hệt nền của topBarPanel)
+                g2.setColor(new java.awt.Color(0, 0, 0, 150)); 
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.dispose();
+                super.paintComponent(g); 
+            }
+        };
 
-        levelLabel.setForeground(textColor);
-        ScoreLabel.setForeground(textColor);
-        coin.setForeground(textColor);
+        ScoreLabel = new javax.swing.JLabel("ĐIỂM: 0") {
+            @Override
+            protected void paintComponent(java.awt.Graphics g) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                // Nền đen mờ (giống hệt nền của topBarPanel)
+                g2.setColor(new java.awt.Color(0, 0, 0, 150)); 
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
 
+        // --- 2. CHỈNH MÀU CHỮ VÀ ĐỘ ĐẬM ---
+        levelLabel.setForeground(new java.awt.Color(255, 255, 255)); 
         
-        // 2. Vẽ nền "Chuẩn Game" cho cái khung topBarPanel (Nền đen trong suốt + Viền Vàng bo góc)
+        // Chữ VÀNG: Màu vàng đồng, cho font BOLD đậm lên
+        coin.setForeground(new java.awt.Color(255, 255, 0)); 
+        coin.setFont(coin.getFont().deriveFont(java.awt.Font.BOLD));
+
+        // Chữ ĐIỂM: Đổi thành màu ĐỎ ĐẬM
+        ScoreLabel.setForeground(new java.awt.Color(255, 51, 51)); 
+        ScoreLabel.setFont(ScoreLabel.getFont().deriveFont(java.awt.Font.BOLD));
+
+        // --- 3. BO VIỀN MÀU VÀNG RÕ NÉT ---
+        javax.swing.border.Border goldBorder = new javax.swing.border.AbstractBorder() {
+            @Override
+            public void paintBorder(java.awt.Component c, java.awt.Graphics g, int x, int y, int width, int height) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                // Màu vàng Gold rõ nét
+                g2.setColor(new java.awt.Color(255, 215, 0)); 
+                g2.setStroke(new java.awt.BasicStroke(2.5f)); // Viền dày 2.5 cho rõ
+                g2.drawRoundRect(x, y, width - 1, height - 1, 20, 20);
+                g2.dispose();
+            }
+            @Override
+            public java.awt.Insets getBorderInsets(java.awt.Component c) {
+                return new java.awt.Insets(4, 15, 4, 15);
+            }
+        };
+
+        coin.setBorder(goldBorder);
+        ScoreLabel.setBorder(goldBorder);
+        coin.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        ScoreLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        coin.setOpaque(false);
+        ScoreLabel.setOpaque(false);
+
+        // --- 4. NỀN KÍNH MỜ CHO TOPBAR (GIỮ NGUYÊN) ---
+        topBarPanel.setOpaque(false);
         topBarPanel.setBorder(new javax.swing.border.AbstractBorder() {
             @Override
             public void paintBorder(java.awt.Component c, java.awt.Graphics g, int x, int y, int width, int height) {
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
                 g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Vẽ nền đen trong suốt (Alpha = 180)
-                g2.setColor(new java.awt.Color(20, 20, 20, 180));
-                g2.fillRoundRect(x + 2, y + 2, width - 4, height - 8, 25, 25);
-
-                // Vẽ viền Vàng
-                g2.setColor(valueColor);
-                g2.setStroke(new java.awt.BasicStroke(2f));
-                g2.drawRoundRect(x + 2, y + 2, width - 4, height - 8, 25, 25);
+                g2.setColor(new java.awt.Color(0, 0, 0, 150));
+                g2.fillRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
+                g2.setColor(java.awt.Color.WHITE);
+                g2.setStroke(new java.awt.BasicStroke(1.5f));
+                g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 25, 25);
                 g2.dispose();
-            }
-
-            @Override
-            public java.awt.Insets getBorderInsets(java.awt.Component c) {
-                // Đẩy các component bên trong lùi vào một chút để không đè lên viền
-                return new java.awt.Insets(5, 15, 5, 15);
             }
         });
 
-
-        // Ẩn đường kẻ ngang mặc định
-        jSeparator1.setVisible(false);
-
-        // giao diện cho JSlider Thanh thời gian
+        // --- 5. TÙY CHỈNH THANH THỜI GIAN & NÚT (GIỮ NGUYÊN LAYOUT CŨ CỦA BẠN) ---
+        Timeline.setOpaque(false);
         Timeline.setUI(new javax.swing.plaf.basic.BasicSliderUI(Timeline) {
             @Override
             public void paintTrack(java.awt.Graphics g) {
                 java.awt.Graphics2D g2d = (java.awt.Graphics2D) g;
                 g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-
                 java.awt.Rectangle t = trackRect;
-
-                // Vẽ nền của thanh thời gian (Màu xám đen)
                 g2d.setColor(new java.awt.Color(50, 50, 50, 200));
-                int trackHeight = 16; // Độ dày của thanh
+                int trackHeight = 12;
                 g2d.fillRoundRect(t.x, t.y + (t.height - trackHeight) / 2, t.width, trackHeight, trackHeight, trackHeight);
-
-                // Tính toán độ dài thời gian còn lại
-                int fillWidth = 0;
-                if (Timeline.getMaximum() > 0) {
-                    fillWidth = (int) (t.width * ((double) Timeline.getValue() / Timeline.getMaximum()));
-                }
-
-                // Đổi màu cảnh báo nếu sắp hết giờ (dưới 20%)
-                if (((double) Timeline.getValue() / Timeline.getMaximum()) < 0.2) {
-                    g2d.setColor(new java.awt.Color(255, 50, 50)); // Đỏ
-                } else {
-                    g2d.setColor(new java.awt.Color(0, 200, 100)); // Xanh lá cây 
-                }
-
-                // Vẽ phần thời gian còn lại
+                int fillWidth = (Timeline.getMaximum() > 0) ? (int) (t.width * ((double) Timeline.getValue() / Timeline.getMaximum())) : 0;
+                double percent = (double) Timeline.getValue() / Timeline.getMaximum();
+                if (percent < 0.25) g2d.setColor(new java.awt.Color(255, 60, 60));
+                else if (percent < 0.5) g2d.setColor(new java.awt.Color(255, 165, 0));
+                else g2d.setColor(new java.awt.Color(0, 220, 100));
                 g2d.fillRoundRect(t.x, t.y + (t.height - trackHeight) / 2, fillWidth, trackHeight, trackHeight, trackHeight);
             }
-
-            @Override
-            public void paintThumb(java.awt.Graphics g) {
-            }
+            @Override public void paintThumb(java.awt.Graphics g) {}
         });
 
-    }
-    // ---> KẾT THÚC HÀM TRANG TRÍ <---
-    
-//hàm hiện thị thua cuộc
-//    private void handleGameOver() {
-//        audioManager.stopBGM();
-//        this.setEnabled(false);
-//        LossScreen loss = new LossScreen(this, config, level, play);
-//        loss.setAlwaysOnTop(true);
-//        loss.setVisible(true);
-//    }
-    
-    public void updateScore(int newScore) {
-    this.currentTotalScore = newScore;
-    // Tạo hiệu ứng nhảy số từ displayedScore đến currentTotalScore
-    javax.swing.Timer ScoreTimer = new javax.swing.Timer(20, null);
-    ScoreTimer.addActionListener(new java.awt.event.ActionListener() {
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-            if (displayedScore < currentTotalScore) {
-                displayedScore += 5; // Tốc độ tăng điểm
-                if (displayedScore > currentTotalScore) displayedScore = currentTotalScore;
-                    ScoreLabel.setText("Điểm: " + displayedScore);
-            } else {
-                ScoreTimer.stop();
-            }
+        javax.swing.AbstractButton[] topBtns = {settingmainButton, hintButton, swapButton, timeButton};
+        String[] icons = {"⚙️", "💡", "🔄", "⏳"};
+        for (int i = 0; i < topBtns.length; i++) {
+            topBtns[i].setText(icons[i]);
+            topBtns[i].setFont(new java.awt.Font("Segoe UI Emoji", java.awt.Font.PLAIN, 18));
+            topBtns[i].setContentAreaFilled(false);
+            topBtns[i].setFocusPainted(false);
+            topBtns[i].setBorderPainted(false);
+            topBtns[i].setOpaque(false);
+            topBtns[i].setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+                @Override
+                public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+                    java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                    g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                    javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+                    if (b.getModel().isPressed()) g2.setColor(new java.awt.Color(200, 200, 200, 255));
+                    else if (b.getModel().isRollover()) g2.setColor(new java.awt.Color(255, 255, 255, 255));
+                    else g2.setColor(new java.awt.Color(255, 255, 255, 200));
+                    int size = Math.min(c.getWidth(), c.getHeight()) - 4;
+                    g2.fillOval((c.getWidth() - size) / 2, (c.getHeight() - size) / 2, size, size);
+                    g2.setColor(c == settingmainButton ? new java.awt.Color(255, 180, 0) : new java.awt.Color(255, 100, 80, 180));
+                    g2.setStroke(new java.awt.BasicStroke(c == settingmainButton ? 2.0f : 1.5f));
+                    g2.drawOval((c.getWidth() - size) / 2, (c.getHeight() - size) / 2, size, size);
+                    g2.dispose();
+                    super.paint(g, c);
+                }
+            });
         }
-    });
-    ScoreTimer.start();
-}
-   
-    public void updateCoin(int newCoin){
+
+        // --- 6. SẮP XẾP LẠI LAYOUT TRONG PANEL ---
+        java.awt.GridBagLayout topLayout = (java.awt.GridBagLayout) topBarPanel.getLayout();
+        java.awt.GridBagConstraints gbc = new java.awt.GridBagConstraints();
+        
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = java.awt.GridBagConstraints.WEST;
+        gbc.insets = new java.awt.Insets(12, 20, 5, 10);
+        topBarPanel.add(coin, gbc);
+
+        gbc.gridy = 1; gbc.insets = new java.awt.Insets(5, 20, 12, 10);
+        topBarPanel.add(ScoreLabel, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1.0; gbc.anchor = java.awt.GridBagConstraints.CENTER;
+        gbc.insets = new java.awt.Insets(10, 0, 5, 0);
+        topBarPanel.add(levelLabel, gbc);
+
+        gbc.gridy = 1; gbc.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gbc.insets = new java.awt.Insets(5, 40, 10, 40);
+        topBarPanel.add(Timeline, gbc);
+
+        javax.swing.AbstractButton[] tools = {timeButton, swapButton, hintButton, settingmainButton};
+        for (int i = 0; i < tools.length; i++) {
+            gbc = new java.awt.GridBagConstraints();
+            gbc.gridx = 2 + i; gbc.gridy = 0; gbc.gridheight = 2;
+            gbc.anchor = java.awt.GridBagConstraints.EAST;
+            gbc.insets = new java.awt.Insets(10, 5, 10, (i == 3 ? 20 : 5));
+            topBarPanel.add(tools[i], gbc);
+        }
+    }
+    public void updateScore(int newScore) {
+        this.currentTotalScore = newScore;
+        // Tạo hiệu ứng nhảy số từ displayedScore đến currentTotalScore
+        javax.swing.Timer ScoreTimer = new javax.swing.Timer(20, null);
+        ScoreTimer.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                if (displayedScore < currentTotalScore) {
+                    displayedScore += 5; // Tốc độ tăng điểm
+                    if (displayedScore > currentTotalScore) {
+                        displayedScore = currentTotalScore;
+                    }
+                    ScoreLabel.setText("ĐIỂM: " + displayedScore);
+                } else {
+                    ScoreTimer.stop();
+                }
+            }
+        });
+        ScoreTimer.start();
+    }
+    
+    public void saveGame() {
+        // Gọi sang PlayScreen để lấy dữ liệu hiện tại
+        String matrix = play.getMatrixAsString();
+        int score = play.get_TotalScore();
+        int time = play.get_timeRemain();
+        String level = play.get_Level();
+
+        // Lưu vào Database qua DAO
+        DTB.saveCurrentGame("tuan", level, score, time, hintCount, shuffleCount, matrix);
+        System.out.println("Đã lưu ván đấu thành công!");
+    }
+
+    public void updateCoin(int newCoin) {
         this.currentTotalCoin = newCoin;
 
         // Tạo hiệu ứng nhảy số từ displayedCoin đến currentTotalCoin
@@ -215,8 +304,10 @@ public class MainScreen extends javax.swing.JFrame {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 if (displayedCoin < currentTotalCoin) {
                     displayedCoin += 5; // Tốc độ tăng điểm
-                    if (displayedCoin > currentTotalCoin) displayedCoin = currentTotalCoin;
-                    coin.setText("Vàng: " + displayedCoin);
+                    if (displayedCoin > currentTotalCoin) {
+                        displayedCoin = currentTotalCoin;
+                    }
+                    coin.setText("VÀNG: " + displayedCoin);
                 } else {
                     ScoreLabel.stop();
                 }
@@ -225,23 +316,23 @@ public class MainScreen extends javax.swing.JFrame {
         ScoreLabel.start();
     }
 
-    public void resetCoinDisplay(int currentTotalCoin){
+    public void resetCoinDisplay(int currentTotalCoin) {
         this.currentTotalCoin = currentTotalCoin;
         this.displayedCoin = currentTotalCoin;
-        coin.setText("Vàng: " + displayedCoin);
+        coin.setText("VÀNG: " + displayedCoin);
     }
 
-    public void resetScoreDisPlay(){
-            this.currentTotalScore = 0;
-            this.displayedScore = 0;
-            ScoreLabel.setText("ĐIỂM: 0");
-        }
-    
+    public void resetScoreDisPlay() {
+        this.currentTotalScore = 0;
+        this.displayedScore = 0;
+        ScoreLabel.setText("ĐIỂM: 0");
+    }
+
 //âm thanh    
     void playMusicByLevel() {
         // Lấy tên của Level hiện tại và viết hoa hết để dễ so sánh
-        String levelName = config.GetLevel().toUpperCase(); 
-        
+        String levelName = config.GetLevel().toUpperCase();
+
         // --- PHE TỐI ---
         if (levelName.equals("AFRICA")) {
             audioManager.playBGM("/sound/SoundBackgroundDark/SoundAfrica.wav");
@@ -249,114 +340,84 @@ public class MainScreen extends javax.swing.JFrame {
             audioManager.playBGM("/sound/SoundBackgroundDark/SoundAsian.wav");
         } else if (levelName.equals("EUROPE")) {
             audioManager.playBGM("/sound/SoundBackgroundDark/SoundEurope.wav");
-            
-        // --- PHE SÁNG ---
+
+            // --- PHE SÁNG ---
         } else if (levelName.equals("EASY")) {
             audioManager.playBGM("/sound/SoundBackgroundLight/SoundEasy.wav");
         } else if (levelName.equals("NORMAL")) {
             audioManager.playBGM("/sound/SoundBackgroundLight/SoundNormal.wav");
         } else if (levelName.equals("HARD")) {
             audioManager.playBGM("/sound/SoundBackgroundLight/SoundHard.wav");
-            
-        // --- MẶC ĐỊNH (PHÒNG HỜ) ---
+
+            // --- MẶC ĐỊNH (PHÒNG HỜ) ---
         } else {
             audioManager.playBGM("/sound/SoundBackground/SoundStart.wav");
         }
     }
-    
+
     public void playSoundEffect(String path) {
         System.out.println("MainScreen has signal! Audio is playing: " + path);
-        
+
         if (audioManager != null) {
             audioManager.playSoundEffect(path);
         } else {
             System.out.println("Error: audioManager not have seen!");
         }
     }
-
-    // Hàm dùng chung để tự động tính toán và phóng to/thu nhỏ mọi thứ
-    public void updateGameLayout(LevelType level) {
+public void updateGameLayout(LevelType level) {
         int screenWidth = getContentPane().getWidth();
         int screenHeight = getContentPane().getHeight();
+        if (screenWidth == 0 || screenHeight == 0) return;
 
-        if (screenWidth == 0 || screenHeight == 0) {
-            return; // Tránh lỗi chia 0 lúc mới khởi tạo
-        }
-        double scaleRatio = (double) screenWidth / 800.0;
-        if (scaleRatio < 1.0) {
-            scaleRatio = 1.0;
-        }
-
+        double scaleRatio = Math.max(1.0, (double) screenWidth / 800.0);
         int newTopBarHeight = (int) (80 * scaleRatio);
-        // set font text
-        int newFontSize = (int) (14 * scaleRatio);
+
+        // --- CẬP NHẬT FONT ---
+        int newFontSize = (int) (15 * scaleRatio);
         java.awt.Font newFont = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, newFontSize);
-        levelLabel.setFont(newFont);
         ScoreLabel.setFont(newFont);
         coin.setFont(newFont);
 
-        int newTimelineWidth = (int) (240 * scaleRatio);
-        int newTimelineHeight = (int) (30 * scaleRatio);
-        Timeline.setPreferredSize(new java.awt.Dimension(newTimelineWidth, newTimelineHeight));
-
-        int newBtnSize = (int) (30 * scaleRatio);
-        java.awt.Dimension newBtnDim = new java.awt.Dimension(newBtnSize, newBtnSize);
-        swapButton.setPreferredSize(newBtnDim);
-        timeButton.setPreferredSize(newBtnDim);
-        hintButton.setPreferredSize(newBtnDim);
-
-        int newSettingSize = (int) (45 * scaleRatio);
-        settingmainButton.setPreferredSize(new java.awt.Dimension(newSettingSize, newSettingSize));
-
-        swapButton.setFont(swapButton.getFont().deriveFont((float) (10f * scaleRatio)));
-        timeButton.setFont(timeButton.getFont().deriveFont((float) (12f * scaleRatio)));
-        hintButton.setFont(hintButton.getFont().deriveFont((float) (16f * scaleRatio)));
-        settingmainButton.setFont(settingmainButton.getFont().deriveFont((float) (20f * scaleRatio)));
-
-        int topBarWidth = (int) (800 * scaleRatio);
-        if (topBarWidth > screenWidth) {
-            topBarWidth = screenWidth;
-        }
-        int topBarX = (screenWidth - topBarWidth) / 2;
-        topBarPanel.setBounds(topBarX, 10, topBarWidth, newTopBarHeight);
-
-        // SCALE BẢNG POKEMON (GAME BOARD)
-        int padding = (int) (40 * scaleRatio); // Lề
-
-        // boder mainBoard 
-        int maxBoardWidth = screenWidth - (padding * 2);
-        int maxBoardHeight = screenHeight - newTopBarHeight - (padding * 2);
-
-        int numRows = level.getRows();
-        int numCols = level.getCols();
-
-        // Tính toán kích thước lớn nhất có thể của MỘT ô Pikachu vuông
-        // Nó phải vừa với cả chiều rộng tối đa chia cho số cột VÀ chiều cao tối đa chia cho số hàng.
-        int maxTileSize_H = maxBoardWidth / numCols;
-        int maxTileSize_V = maxBoardHeight / numRows;
-
-        // Kích thước ô cuối cùng là giá trị nhỏ nhất trong 2 giá trị trên, để luôn đảm bảo là hình vuông
-        int finalTileSize = Math.min(maxTileSize_H, maxTileSize_V);
-
-        // Cập nhật kích thước thực tế của play theo tỷ lệ đan khít
-        // Bảng không được phình to quá mức nữa, để không bị méo.
-        int boardWidth = finalTileSize * numCols;
-        int boardHeight = finalTileSize * numRows;
-
-        // Đặt giới hạn tối thiểu
-        if (boardWidth < 400) {
-            boardWidth = 400;
-        }
-        if (boardHeight < 300) {
-            boardHeight = 300;
-        }
-
-        // Tọa độ luôn nằm chính giữa khoảng trống còn lại
-        int newX = (screenWidth - boardWidth) / 2;
-        int newY = newTopBarHeight + (screenHeight - newTopBarHeight - boardHeight) / 2;
-
-        play.setBounds(newX, newY, boardWidth, boardHeight);
+        // --- CỐ ĐỊNH KÍCH THƯỚC Ô (CHỨA ĐỦ 7 CHỮ SỐ) ---
+        int badgeWidth = (int) (220 * scaleRatio); // Đủ rộng cho "VÀNG: 9.999.999"
+        int badgeHeight = (int) (35 * scaleRatio);
+        java.awt.Dimension badgeSize = new java.awt.Dimension(badgeWidth, badgeHeight);
         
+        coin.setPreferredSize(badgeSize);
+        coin.setMinimumSize(badgeSize);
+        coin.setMaximumSize(badgeSize); // Ép cứng kích thước không cho co lại
+        
+        ScoreLabel.setPreferredSize(badgeSize);
+        ScoreLabel.setMinimumSize(badgeSize);
+        ScoreLabel.setMaximumSize(badgeSize);
+
+        // --- CẬP NHẬT CẤP ĐỘ & TIMELINE ---
+        levelLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, (int) (24 * scaleRatio)));
+        Timeline.setPreferredSize(new java.awt.Dimension((int) (380 * scaleRatio), (int) (30 * scaleRatio)));
+
+        // --- ÉP KÍCH THƯỚC NÚT ---
+        int newBtnSize = (int) (40 * scaleRatio);
+        java.awt.Dimension btnDim = new java.awt.Dimension(newBtnSize, newBtnSize);
+        javax.swing.JButton[] btns = {timeButton, swapButton, hintButton, settingmainButton};
+        for (javax.swing.JButton btn : btns) {
+            btn.setPreferredSize(btnDim);
+            btn.setMinimumSize(btnDim);
+            btn.setFont(btn.getFont().deriveFont((float) (18 * scaleRatio)));
+        }
+
+        // --- CĂN CHỈNH TOPBAR ---
+        int topBarWidth = Math.min(screenWidth, (int) (800 * scaleRatio));
+        topBarPanel.setBounds((screenWidth - topBarWidth) / 2, 10, topBarWidth, newTopBarHeight);
+
+        // --- SCALE BẢNG GAME ---
+        int padding = (int) (40 * scaleRatio);
+        int maxBW = screenWidth - (padding * 2);
+        int maxBH = screenHeight - newTopBarHeight - (padding * 2);
+        int tileSize = Math.min(maxBW / level.getCols(), maxBH / level.getRows());
+        int bw = Math.max(400, tileSize * level.getCols());
+        int bh = Math.max(300, tileSize * level.getRows());
+        play.setBounds((screenWidth - bw) / 2, newTopBarHeight + (screenHeight - newTopBarHeight - bh) / 2, bw, bh);
+
         topBarPanel.revalidate();
         topBarPanel.repaint();
         getContentPane().revalidate();
@@ -371,13 +432,13 @@ public class MainScreen extends javax.swing.JFrame {
         this.shuffleCount = 3;
         audioManager.stopBGM();
         if (SoundLoad.isBgmOn) {
-            playMusicByLevel(); 
+            playMusicByLevel();
         }
         resetCoinDisplay(play.get_Totalcoin());
         resetScoreDisPlay();
         //xóa bảng hiện tại.
-        if(play != null){
-        this.getContentPane().remove(play);
+        if (play != null) {
+            this.getContentPane().remove(play);
         }
         // tạo bảng mới.
         play = new PlayScreen(config, this);
@@ -386,7 +447,7 @@ public class MainScreen extends javax.swing.JFrame {
 
         updateGameLayout(level);
     }
-    
+
     // Thêm hàm này vào MainScreen.java
     public void stopMusic() {
         if (audioManager != null) {
@@ -401,6 +462,7 @@ public class MainScreen extends javax.swing.JFrame {
     public int getShuffleCount() {
         return shuffleCount;
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -421,10 +483,10 @@ public class MainScreen extends javax.swing.JFrame {
         hintButton = new javax.swing.JButton();
         swapButton = new javax.swing.JButton();
         timeButton = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 600));
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         topBarPanel.setOpaque(false);
         topBarPanel.setPreferredSize(new java.awt.Dimension(800, 80));
@@ -436,10 +498,11 @@ public class MainScreen extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 48;
         gridBagConstraints.ipady = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(2, 24, 0, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(2, 10, 0, 0);
         topBarPanel.add(coin, gridBagConstraints);
 
         ScoreLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -448,14 +511,15 @@ public class MainScreen extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
         gridBagConstraints.ipady = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 24, 0, 0);
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 10, 0, 0);
         topBarPanel.add(ScoreLabel, gridBagConstraints);
 
         levelLabel.setFont(new java.awt.Font("Segoe UI", 3, 24)); // NOI18N
-        levelLabel.setForeground(new java.awt.Color(255, 0, 51));
+        levelLabel.setForeground(new java.awt.Color(255, 255, 51));
         levelLabel.setText("CẤP ĐỘ: ");
         levelLabel.setPreferredSize(new java.awt.Dimension(250, 30));
         levelLabel.addAncestorListener(new javax.swing.event.AncestorListener() {
@@ -470,9 +534,9 @@ public class MainScreen extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 147;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(1, 191, 0, 0);
+        gridBagConstraints.insets = new java.awt.Insets(5, 191, 0, 0);
         topBarPanel.add(levelLabel, gridBagConstraints);
 
         Timeline.setToolTipText("");
@@ -546,25 +610,13 @@ public class MainScreen extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         topBarPanel.add(timeButton, gridBagConstraints);
 
-        jSeparator1.setPreferredSize(new java.awt.Dimension(9999, 3));
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(topBarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(topBarPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(520, Short.MAX_VALUE))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 19;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 520, 0);
+        getContentPane().add(topBarPanel, gridBagConstraints);
 
         setSize(new java.awt.Dimension(814, 608));
         setLocationRelativeTo(null);
@@ -577,6 +629,7 @@ public class MainScreen extends javax.swing.JFrame {
         play.stopTimer();
         PauseScreen pause = new PauseScreen(this, config, level, play);
         pause.setVisible(true);
+        saveGame();
         play.countdownTimer.stop();
         // this.dispose();
     }//GEN-LAST:event_settingmainButtonActionPerformed
@@ -651,7 +704,6 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JSlider Timeline;
     private javax.swing.JLabel coin;
     private javax.swing.JButton hintButton;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel levelLabel;
     private javax.swing.JButton settingmainButton;
     private javax.swing.JButton swapButton;

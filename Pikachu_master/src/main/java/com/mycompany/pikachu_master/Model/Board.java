@@ -25,7 +25,13 @@ public class Board {
             cols = rand.nextInt(5, 10);
         } while (rows * cols % 2 != 0);
         this.matrix = new Cell[rows+ 2][cols + 2];
-        this.totalCells = rows * cols;        
+        this.totalCells = rows * cols; 
+        
+        for (int i = 0; i <= rows + 1; i++) {
+        for (int j = 0; j <= cols + 1; j++) {
+        matrix[i][j] = new Cell(i, j, 0, false); // Khởi tạo ô trống mặc định
+        }
+        }
     }
     
     public Board(int a, int b, boolean fin) {
@@ -43,6 +49,11 @@ public class Board {
         }
         this.matrix = new Cell[rows+ 2][cols + 2];
         this.totalCells = rows * cols;
+        for (int i = 0; i <= rows + 1; i++) {
+        for (int j = 0; j <= cols + 1; j++) {
+        matrix[i][j] = new Cell(i, j, 0, false); // Khởi tạo ô trống mặc định
+        }
+        }
     }
     
     public void initBoard(IAlgorithm a, int NoP) {

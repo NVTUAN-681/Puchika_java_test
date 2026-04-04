@@ -4,9 +4,40 @@
  */
 package com.mycompany.pikachu_master.Controller;
 
+import com.mycompany.pikachu_master.Data.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class GameConfig {
-    String Level;
-    int rows, cols, currentCoin, shuffleCount, hintCount, timeLimit;
+    String Level, matrix_data;
+    int rows, cols, score, currentCoin, shuffleCount, hintCount, timeLimit;
+    boolean resume = false;
+
+    public boolean isResume() {
+        return resume;
+    }
+
+    public void setResume(boolean resume) {
+        this.resume = resume;
+    }
+    
+    public String getMatrix_data() {
+        return matrix_data;
+    }
+
+    public void setMatrix_data(String matrix_data) {
+        this.matrix_data = matrix_data;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
 
     public String getLevel() {
         return Level;
@@ -70,6 +101,7 @@ public class GameConfig {
     
     public GameConfig(String Level){
         this.Level = Level;
+        this.resume = false;
     }
 
     public GameConfig(String Level, int rows, int cols, int currentCoin, int shuffleCount, int hintCount, int timeLimit) {
@@ -81,7 +113,4 @@ public class GameConfig {
         this.hintCount = hintCount;
         this.timeLimit = timeLimit;
     }
-    
-    
-    
 }
