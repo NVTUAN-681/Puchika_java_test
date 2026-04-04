@@ -10,6 +10,7 @@ import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundStartScreen;
 import com.mycompany.pikachu_master.Utils.Button_Icon;
 import com.mycompany.pikachu_master.Utils.ImageLoad;
+import com.mycompany.pikachu_master.Utils.SoundLoad;
 import java.awt.geom.RoundRectangle2D;
 
 /**
@@ -24,6 +25,7 @@ public class LevelScreen extends javax.swing.JFrame {
      * Creates new form LevelScreen
      */
     StartScreen start;
+    private SoundLoad audioManager = new SoundLoad();
     private String selectedSide = "NONE"; // Lưu phe đang chọn: LIGHT hoặc DARK
     private java.awt.Color currentBorderColor = new java.awt.Color(255, 215, 0); // Màu viền JFrame mặc định (Vàng)
     private java.awt.Image defaultBg; // Ảnh nền mặc định (ở giữa 2 phe)
@@ -47,25 +49,46 @@ public class LevelScreen extends javax.swing.JFrame {
         };
         dynamicBackground.setLayout(new java.awt.GridBagLayout());
         setContentPane(dynamicBackground);
-      
+
         initComponents();
         this.start = start;
+        setupAllButtonIcons();
 
         // 1. TẢI TÀI NGUYÊN: Load 2 loại phôi nút khác nhau cho 2 phe
-        ImageLoad.loadBg("LIGHT_SIDE", 1, 250, 70, 15);
+        ImageLoad.loadBg("LIGHT_SIDE", 3, 250, 70, 15);
         ImageLoad.loadBg("DARK_SIDE", 2, 250, 70, 15);
 
         // 2. TRẠNG THÁI BAN ĐẦU: Ẩn tất cả các nút Level, chỉ hiện 2 Panel chọn phe
         setButtonsVisibility(false);
+        java.awt.Image imgLight = null;
+        java.awt.Image imgDark = null;
+        try {
+            // Đã thêm dấu "/" ở đầu để đảm bảo path lấy từ thư mục gốc resources
+            java.net.URL lightUrl = getClass().getResource("/images/BackGround/sunMom.png");
+            if (lightUrl != null) {
+                imgLight = new javax.swing.ImageIcon(lightUrl).getImage();
+            } else {
+                System.out.println("⚠️ LỖI: Không tìm thấy ảnh /images/BackGround/light.png");
+            }
+
+            java.net.URL darkUrl = getClass().getResource("/images/BackGround/moonMom.png");
+            if (darkUrl != null) {
+                imgDark = new javax.swing.ImageIcon(darkUrl).getImage();
+            } else {
+                System.out.println("⚠️ LỖI: Không tìm thấy ảnh /images/BackGround/moon.png");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // --- GỌI HIỆU ỨNG CHO 2 PANEL Ở ĐÂY ---
-        applyPanelEffect(lightPanel, "LIGHT");
-        applyPanelEffect(darkPanel, "DARK");
+        applyPanelEffect(lightPanel, "LIGHT", imgLight);
+        applyPanelEffect(darkPanel, "DARK", imgDark);
         setupFrameStyle();
         updateButtonSkins();
     }
 
     private void applySideSelection(String side) {
-      // Ngăn chặn việc click chọn lại khi đã chọn phe rồi
+        // Ngăn chặn việc click chọn lại khi đã chọn phe rồi
         if (!this.selectedSide.equals("NONE")) {
             return;
         }
@@ -73,7 +96,7 @@ public class LevelScreen extends javax.swing.JFrame {
         this.selectedSide = side;
 
         // 1. Cấu hình nút SIÊU TO KHỔNG LỒ (Gần full màn hình 1214px)
-        int btnWidth = 800; 
+        int btnWidth = 800;
         int btnHeight = 120; // Nút cao hơn để cân đối với chiều dài
         java.awt.Dimension massiveBtnSize = new java.awt.Dimension(btnWidth, btnHeight);
         java.awt.Font massiveFont = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 36); // Chữ bự chà bá
@@ -85,18 +108,18 @@ public class LevelScreen extends javax.swing.JFrame {
         // 2. Ép Panel bung lụa ra toàn màn hình thay vì chỉ đứng ở giữa
         java.awt.GridBagLayout mainLayout = (java.awt.GridBagLayout) getContentPane().getLayout();
         java.awt.GridBagConstraints fullScreenGbc = new java.awt.GridBagConstraints();
-        fullScreenGbc.gridx = 0; 
+        fullScreenGbc.gridx = 0;
         fullScreenGbc.gridy = 0;
-        fullScreenGbc.weightx = 1.0; 
-        fullScreenGbc.weighty = 1.0; 
+        fullScreenGbc.weightx = 1.0;
+        fullScreenGbc.weighty = 1.0;
         fullScreenGbc.fill = java.awt.GridBagConstraints.BOTH; // <--- Điểm mấu chốt: Bung kín màn hình
         fullScreenGbc.anchor = java.awt.GridBagConstraints.CENTER;
 
         if (side.equals("LIGHT")) {
             // --- XỬ LÝ PANEL ---
             lightPanel.setOpaque(false);
-            lightPanel.setBorder(null);    
-            darkPanel.setVisible(false);   
+            //lightPanel.setBorder(null);    
+            darkPanel.setVisible(false);
 
             // Áp Layout full màn hình cho Light Panel
             mainLayout.setConstraints(lightPanel, fullScreenGbc);
@@ -104,7 +127,7 @@ public class LevelScreen extends javax.swing.JFrame {
             lightPanel.setMinimumSize(new java.awt.Dimension(1200, 800));
 
             // --- PHÓNG TO VÀ BẬT NÚT ---
-            javax.swing.JButton[] lightBtns = {africaButton, europeButton, asianButton};
+            javax.swing.JButton[] lightBtns = {easyButton, normalButton, hardButton};
             for (javax.swing.JButton btn : lightBtns) {
                 btn.setVisible(true);
                 btn.setPreferredSize(massiveBtnSize);
@@ -118,8 +141,8 @@ public class LevelScreen extends javax.swing.JFrame {
         } else if (side.equals("DARK")) {
             // --- XỬ LÝ PANEL ---
             darkPanel.setOpaque(false);
-            darkPanel.setBorder(null);     
-            lightPanel.setVisible(false);  
+            //darkPanel.setBorder(null);     
+            lightPanel.setVisible(false);
 
             // Áp Layout full màn hình cho Dark Panel
             mainLayout.setConstraints(darkPanel, fullScreenGbc);
@@ -127,7 +150,7 @@ public class LevelScreen extends javax.swing.JFrame {
             darkPanel.setMinimumSize(new java.awt.Dimension(1200, 800));
 
             // --- PHÓNG TO VÀ BẬT NÚT ---
-            javax.swing.JButton[] darkBtns = {easyButton, normalButton, hardButton};
+            javax.swing.JButton[] darkBtns = {africaButton, europeButton, asianButton};
             for (javax.swing.JButton btn : darkBtns) {
                 btn.setVisible(true);
                 btn.setPreferredSize(massiveBtnSize);
@@ -145,32 +168,49 @@ public class LevelScreen extends javax.swing.JFrame {
         this.repaint();
     }
 
-    private void applyPanelEffect(javax.swing.JPanel panel, String sideType) {
-        // 1. Kích thước ảo ép cứng để chống giật (Jitter) của Swing
+    private void applyPanelEffect(javax.swing.JPanel panel, String sideType, java.awt.Image panelImage) {
+        // 1. Kích thước ảo ép cứng để chống giật
         panel.setPreferredSize(new java.awt.Dimension(380, 580));
         panel.setMinimumSize(new java.awt.Dimension(380, 580));
         panel.setOpaque(false);
 
         // 2. Màu sắc
-        java.awt.Color normalBg = sideType.equals("LIGHT") ? new java.awt.Color(255, 255, 220, 150) : new java.awt.Color(20, 20, 40, 180);
-        java.awt.Color hoverBg = sideType.equals("LIGHT") ? new java.awt.Color(255, 255, 220, 220) : new java.awt.Color(45, 45, 70, 220);
+        java.awt.Color normalBg = sideType.equals("LIGHT") ? new java.awt.Color(255, 255, 220, 100) : new java.awt.Color(20, 20, 40, 180);
+        java.awt.Color hoverBg = sideType.equals("LIGHT") ? new java.awt.Color(255, 255, 220, 180) : new java.awt.Color(45, 45, 70, 220);
         java.awt.Color hoverBorder = sideType.equals("LIGHT") ? new java.awt.Color(255, 255, 0) : new java.awt.Color(200, 50, 255);
 
-        final int[] drawOffset = {15}; 
+        final int[] drawOffset = {15};
         final java.awt.Color[] drawColor = {normalBg};
 
-        // Tự vẽ lớp kính thu/phóng
+        // Tự vẽ lớp kính thu/phóng và chèn ảnh lên trên
         panel.setBorder(new javax.swing.border.AbstractBorder() {
             @Override
             public void paintBorder(java.awt.Component c, java.awt.Graphics g, int x, int y, int width, int height) {
+                if (!selectedSide.equals("NONE")) {
+                    return;
+                }
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
                 g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-                
+
                 int off = drawOffset[0];
-                
+
+                // Vẽ lớp phủ màu trong suốt
                 g2.setColor(drawColor[0]);
                 g2.fillRect(x + off, y + off, width - 2 * off, height - 2 * off);
-                
+
+                // Vẽ ảnh lên trên lớp phủ
+                if (panelImage != null) {
+                    int imgPadding = 40; // Độ thụt lề của ảnh so với viền (thay đổi để chỉnh độ to nhỏ của ảnh)
+
+                    int imgX = x + off + imgPadding;
+                    int imgY = y + off + imgPadding;
+                    int imgW = width - 2 * off - 2 * imgPadding;
+                    int imgH = height - 2 * off - 2 * imgPadding;
+
+                    g2.drawImage(panelImage, imgX, imgY, imgW, imgH, null);
+                }
+
+                // Vẽ viền
                 if (off < 15) {
                     g2.setColor(currentBorderColor);
                     g2.setStroke(new java.awt.BasicStroke(2f));
@@ -180,53 +220,63 @@ public class LevelScreen extends javax.swing.JFrame {
             }
         });
 
-        // 3. Sự kiện chuột
+        // 3. Sự kiện chuột 
         panel.addMouseListener(new java.awt.event.MouseAdapter() {
             private javax.swing.Timer timer;
 
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                if (!selectedSide.equals(ThemeManager.SIDE_DEFAULT)) return;
-                
+                // CHÚ Ý: Đã sửa lại khớp với biến selectedSide của bạn
+                if (!selectedSide.equals("NONE")) {
+                    return;
+                }
+
                 panel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
                 drawColor[0] = hoverBg;
                 currentBorderColor = hoverBorder;
-                
-                // ---> ĐÃ TRẢ LẠI: ĐỔI HÌNH NỀN KHI LƯỚT VÀO <---
+
                 currentBg = ThemeManager.getBackgroundImage(sideType);
                 getContentPane().repaint();
 
-                animate(0); // Lớp kính phình to
+                animate(0); // Phình to
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                if (!selectedSide.equals(ThemeManager.SIDE_DEFAULT)) return;
-                
+                // CHÚ Ý: Đã sửa lại khớp với biến selectedSide của bạn
+                if (!selectedSide.equals("NONE")) {
+                    return;
+                }
+
                 drawColor[0] = normalBg;
                 currentBorderColor = new java.awt.Color(255, 215, 0);
-                
-                // ---> ĐÃ TRẢ LẠI: QUAY VỀ HÌNH NỀN CŨ KHI RÚT RA <---
+
                 currentBg = ThemeManager.getBackgroundImage(ThemeManager.SIDE_DEFAULT);
                 getContentPane().repaint();
 
-                animate(15); // Lớp kính thu nhỏ lại
+                animate(15); // Thu nhỏ
             }
 
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (selectedSide.equals("NONE")) { // Chỉ phát tiếng khi chưa chọn phe nào
+                    SoundLoad audioManager = new SoundLoad();
+                    audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav"); // Đổi đường dẫn file nếu cần
+                }
                 applySideSelection(sideType);
             }
 
             private void animate(int targetOffset) {
-                if (timer != null && timer.isRunning()) timer.stop();
+                if (timer != null && timer.isRunning()) {
+                    timer.stop();
+                }
                 timer = new javax.swing.Timer(10, e -> {
                     if (drawOffset[0] == targetOffset) {
                         timer.stop();
                         return;
                     }
                     drawOffset[0] += (drawOffset[0] < targetOffset) ? 1 : -1;
-                    panel.repaint(); 
+                    panel.repaint();
                 });
                 timer.start();
             }
@@ -294,30 +344,64 @@ public class LevelScreen extends javax.swing.JFrame {
         this.darkOverlay.setBackground(new java.awt.Color(0, 0, 0, 180));
         this.darkOverlay.setVisible(true);
     }
-    
-     private void setupAllButtonIcons() {
+
+    private void setupAllButtonIcons() {
         // ---> 1. THUỐC ĐẶC TRỊ TẬT KÉO DÃN LỆCH CHỮ CỦA NETBEANS <---
         java.awt.GridBagLayout layout = (java.awt.GridBagLayout) getContentPane().getLayout();
-        javax.swing.AbstractButton[] btns = {africaButton, europeButton, asianButton};
-        
+        javax.swing.AbstractButton[] btns = {africaButton, europeButton, asianButton, easyButton, normalButton, hardButton, exitButton3};
+
         for (javax.swing.AbstractButton btn : btns) {
             java.awt.GridBagConstraints gbc = layout.getConstraints(btn);
             gbc.fill = java.awt.GridBagConstraints.NONE; // Cấm tiệt việc tự kéo dãn nút
             gbc.ipadx = 0; // Xóa sạch cái lề ảo 150px mà NetBeans tự nhét vào
             layout.setConstraints(btn, gbc);
         }
-        
-        
-       Button_Icon.applyCachedIcons(africaButton, "AFRICA", "PAUSE_BTN");
-       Button_Icon.applyCachedIcons(europeButton, "EUROPE", "PAUSE_BTN");
-       Button_Icon.applyCachedIcons(asianButton, "ASIAN", "PAUSE_BTN");
-       
-       africaButton.setForeground(java.awt.Color.WHITE);
-       europeButton.setForeground(java.awt.Color.WHITE);
-       asianButton.setForeground(java.awt.Color.WHITE);
-        
-     }
 
+        Button_Icon.applyCachedIcons(africaButton, "AFRICA", "DARK_BTN");
+        Button_Icon.applyCachedIcons(europeButton, "EUROPE", "DARK_BTN");
+        Button_Icon.applyCachedIcons(asianButton, "ASIAN", "DARK_BTN");
+        Button_Icon.applyCachedIcons(easyButton, "EASY", "LIGHT_BTN");
+        Button_Icon.applyCachedIcons(normalButton, "NORMAL", "LIGHT_BTN");
+        Button_Icon.applyCachedIcons(hardButton, "HARD", "LIGHT_BTN");
+
+       exitButton3.setContentAreaFilled(false);
+        exitButton3.setFocusPainted(false);
+        exitButton3.setBorderPainted(false);
+        exitButton3.setOpaque(false);
+        exitButton3.setForeground(java.awt.Color.WHITE); // Chữ màu trắng
+        exitButton3.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); // Chữ to rõ
+
+        // Ghi đè giao diện UI để tự vẽ hình bo góc
+        exitButton3.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                // Bật khử răng cưa cho góc bo mượt mà
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+                
+                // Hiệu ứng đổi màu nền khi di chuột / bấm
+                if (b.getModel().isPressed()) {
+                    g2.setColor(new java.awt.Color(255, 255, 255, 100)); // Trắng mờ khi bấm
+                } else if (b.getModel().isRollover()) {
+                    g2.setColor(new java.awt.Color(255, 255, 255, 50)); // Trắng rất mờ khi chuột lướt qua
+                } else {
+                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); // Nền đen trong suốt lúc bình thường
+                }
+                
+                // Vẽ nền bo góc (Độ cong 20px)
+                g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
+                
+                // Vẽ thêm cái viền trắng mỏng cho sang trọng
+                g2.setColor(java.awt.Color.WHITE);
+                g2.setStroke(new java.awt.BasicStroke(1.5f));
+                g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
+                
+                g2.dispose();
+                super.paint(g, c); // Ra lệnh vẽ cái chữ "<" đè lên trên nền
+            }
+        });
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -332,13 +416,13 @@ public class LevelScreen extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         exitButton3 = new javax.swing.JButton();
         lightPanel = new javax.swing.JPanel();
+        easyButton = new javax.swing.JButton();
+        normalButton = new javax.swing.JButton();
+        hardButton = new javax.swing.JButton();
+        darkPanel = new javax.swing.JPanel();
         africaButton = new javax.swing.JButton();
         europeButton = new javax.swing.JButton();
         asianButton = new javax.swing.JButton();
-        darkPanel = new javax.swing.JPanel();
-        normalButton = new javax.swing.JButton();
-        hardButton = new javax.swing.JButton();
-        easyButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -364,55 +448,18 @@ public class LevelScreen extends javax.swing.JFrame {
         lightPanel.setPreferredSize(new java.awt.Dimension(350, 550));
         lightPanel.setLayout(new java.awt.GridBagLayout());
 
-        africaButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        africaButton.setText("AFRICA");
-        africaButton.setPreferredSize(new java.awt.Dimension(250, 60));
-        africaButton.addActionListener(this::africaButtonActionPerformed);
+        easyButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        easyButton.setText("DỄ");
+        easyButton.setPreferredSize(new java.awt.Dimension(250, 60));
+        easyButton.addActionListener(this::easyButtonActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 169;
+        gridBagConstraints.ipadx = 232;
         gridBagConstraints.ipady = 33;
-        gridBagConstraints.insets = new java.awt.Insets(130, 80, 0, 80);
-        lightPanel.add(africaButton, gridBagConstraints);
-
-        europeButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        europeButton.setText("EUROPE  ");
-        europeButton.setPreferredSize(new java.awt.Dimension(250, 60));
-        europeButton.addActionListener(this::europeButtonActionPerformed);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 156;
-        gridBagConstraints.ipady = 33;
-        gridBagConstraints.insets = new java.awt.Insets(60, 80, 0, 80);
-        lightPanel.add(europeButton, gridBagConstraints);
-
-        asianButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        asianButton.setText("ASIAN ");
-        asianButton.setPreferredSize(new java.awt.Dimension(250, 60));
-        asianButton.addActionListener(this::asianButtonActionPerformed);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 171;
-        gridBagConstraints.ipady = 33;
-        gridBagConstraints.insets = new java.awt.Insets(60, 80, 180, 80);
-        lightPanel.add(asianButton, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(125, 213, 125, 0);
-        getContentPane().add(lightPanel, gridBagConstraints);
-
-        darkPanel.setMinimumSize(new java.awt.Dimension(350, 550));
-        darkPanel.setPreferredSize(new java.awt.Dimension(350, 550));
-        darkPanel.setLayout(new java.awt.GridBagLayout());
+        gridBagConstraints.insets = new java.awt.Insets(100, 20, 0, 20);
+        lightPanel.add(easyButton, gridBagConstraints);
 
         normalButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         normalButton.setText("THƯỜNG");
@@ -422,10 +469,10 @@ public class LevelScreen extends javax.swing.JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.ipadx = 156;
+        gridBagConstraints.ipadx = 210;
         gridBagConstraints.ipady = 33;
-        gridBagConstraints.insets = new java.awt.Insets(60, 80, 0, 80);
-        darkPanel.add(normalButton, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(60, 20, 0, 20);
+        lightPanel.add(normalButton, gridBagConstraints);
 
         hardButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         hardButton.setText("KHÓ NHA BRO");
@@ -437,27 +484,64 @@ public class LevelScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 171;
         gridBagConstraints.ipady = 33;
-        gridBagConstraints.insets = new java.awt.Insets(60, 80, 180, 80);
-        darkPanel.add(hardButton, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(60, 20, 150, 20);
+        lightPanel.add(hardButton, gridBagConstraints);
 
-        easyButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        easyButton.setText("DỄ");
-        easyButton.setPreferredSize(new java.awt.Dimension(250, 60));
-        easyButton.addActionListener(this::easyButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(125, 213, 0, 0);
+        getContentPane().add(lightPanel, gridBagConstraints);
+
+        darkPanel.setMinimumSize(new java.awt.Dimension(350, 550));
+        darkPanel.setPreferredSize(new java.awt.Dimension(350, 550));
+        darkPanel.setLayout(new java.awt.GridBagLayout());
+
+        africaButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        africaButton.setText("AFRICA");
+        africaButton.setPreferredSize(new java.awt.Dimension(250, 60));
+        africaButton.addActionListener(this::africaButtonActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 169;
         gridBagConstraints.ipady = 33;
-        gridBagConstraints.insets = new java.awt.Insets(130, 80, 0, 80);
-        darkPanel.add(easyButton, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(100, 20, 0, 20);
+        darkPanel.add(africaButton, gridBagConstraints);
+
+        europeButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        europeButton.setText("EUROPE  ");
+        europeButton.setPreferredSize(new java.awt.Dimension(250, 60));
+        europeButton.addActionListener(this::europeButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 156;
+        gridBagConstraints.ipady = 33;
+        gridBagConstraints.insets = new java.awt.Insets(60, 20, 0, 20);
+        darkPanel.add(europeButton, gridBagConstraints);
+
+        asianButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        asianButton.setText("ASIAN ");
+        asianButton.setPreferredSize(new java.awt.Dimension(250, 60));
+        asianButton.addActionListener(this::asianButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 171;
+        gridBagConstraints.ipady = 33;
+        gridBagConstraints.insets = new java.awt.Insets(60, 20, 150, 20);
+        darkPanel.add(asianButton, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(125, 0, 125, 220);
+        gridBagConstraints.insets = new java.awt.Insets(125, 0, 0, 220);
         getContentPane().add(darkPanel, gridBagConstraints);
 
         setSize(new java.awt.Dimension(1214, 808));
@@ -466,6 +550,8 @@ public class LevelScreen extends javax.swing.JFrame {
 
     private void africaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_africaButtonActionPerformed
         // TODO add your handling code here:
+        //SoundLoad audioManager = new SoundLoad();
+        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
         start.setLevel("AFRICA");
         start.UpdateLevel("AFRICA");
         start.setGameTheme(this.selectedSide);
@@ -475,6 +561,8 @@ public class LevelScreen extends javax.swing.JFrame {
 
     private void asianButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_asianButtonActionPerformed
         // TODO add your handling code here:
+        //SoundLoad audioManager = new SoundLoad();
+        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
         start.setLevel("ASIAN");
         start.UpdateLevel("ASIAN");
         start.setGameTheme(this.selectedSide);
@@ -484,6 +572,8 @@ public class LevelScreen extends javax.swing.JFrame {
 
     private void europeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_europeButtonActionPerformed
         // TODO add your handling code here:
+        //SoundLoad audioManager = new SoundLoad();
+        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
         start.setLevel("EUROPE");
         start.UpdateLevel("EUROPE");
         start.setGameTheme(this.selectedSide);
@@ -493,14 +583,63 @@ public class LevelScreen extends javax.swing.JFrame {
 
     private void exitButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton3ActionPerformed
         // TODO add your handling code here:
-        this.dispose();
-        if (start != null) {
-            start.setVisible(true);
+        // 1. Thêm tiếng click chuột
+        //SoundLoad audioManager = new SoundLoad();
+        audioManager.playSoundEffect("/Sound/SoundTap/tap.wav"); // <--- NHỚ THAY TÊN FILE
+
+        // 2. Kiểm tra trạng thái hiện tại
+        if (!this.selectedSide.equals("NONE")) {
+
+            this.selectedSide = "NONE";
+
+            // Hiện lại cả 2 Panel
+            lightPanel.setVisible(true);
+            darkPanel.setVisible(true);
+
+            // Ẩn tất cả các nút Level
+            setButtonsVisibility(false);
+
+            // Trả lại ảnh nền mặc định
+            currentBg = ThemeManager.getBackgroundImage(ThemeManager.SIDE_DEFAULT);
+
+            // Trả lại màu viền vàng mặc định
+            currentBorderColor = new java.awt.Color(255, 215, 0);
+
+            // Reset Layout để 2 Panel quay về vị trí cũ (ở giữa, 2 bên)
+            java.awt.GridBagLayout mainLayout = (java.awt.GridBagLayout) getContentPane().getLayout();
+
+            // Cấu hình vị trí cho Light Panel (bên trái)
+            java.awt.GridBagConstraints lightGbc = new java.awt.GridBagConstraints();
+            lightGbc.gridx = 1;
+            lightGbc.gridy = 0;
+            lightGbc.insets = new java.awt.Insets(125, 213, 0, 0); // Lấy lại thông số insets cũ
+            mainLayout.setConstraints(lightPanel, lightGbc);
+            lightPanel.setPreferredSize(new java.awt.Dimension(350, 550)); // Kích thước ban đầu
+
+            // Cấu hình vị trí cho Dark Panel (bên phải)
+            java.awt.GridBagConstraints darkGbc = new java.awt.GridBagConstraints();
+            darkGbc.gridx = 2;
+            darkGbc.gridy = 0;
+            darkGbc.insets = new java.awt.Insets(125, 0, 0, 220); // Lấy lại thông số insets cũ
+            mainLayout.setConstraints(darkPanel, darkGbc);
+            darkPanel.setPreferredSize(new java.awt.Dimension(350, 550)); // Kích thước ban đầu
+
+            this.revalidate();
+            this.repaint();
+
+        } else {
+            // NẾU CHƯA CHỌN PHE (ĐANG Ở MÀN HÌNH CHỌN PHE): Thoát hẳn về StartScreen
+            this.dispose();
+            if (start != null) {
+                start.setVisible(true);
+            }
         }
     }//GEN-LAST:event_exitButton3ActionPerformed
 
     private void easyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_easyButtonActionPerformed
         // TODO add your handling code here:
+        //SoundLoad audioManager = new SoundLoad();
+        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
         start.setLevel("EASY");
         start.UpdateLevel("EASY");
         start.setGameTheme(this.selectedSide);
@@ -510,6 +649,8 @@ public class LevelScreen extends javax.swing.JFrame {
 
     private void normalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_normalButtonActionPerformed
         // TODO add your handling code here:
+        //SoundLoad audioManager = new SoundLoad();
+        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
         start.setLevel("NORMAL");
         start.UpdateLevel("NORMAL");
         start.setGameTheme(this.selectedSide);
@@ -519,6 +660,8 @@ public class LevelScreen extends javax.swing.JFrame {
 
     private void hardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hardButtonActionPerformed
         // TODO add your handling code here:
+        //SoundLoad audioManager = new SoundLoad();
+        audioManager.playTransitionSound("/Sound/SoundTap/NextScreen.wav");
         start.setLevel("HARD");
         start.UpdateLevel("HARD");
         start.setGameTheme(this.selectedSide);

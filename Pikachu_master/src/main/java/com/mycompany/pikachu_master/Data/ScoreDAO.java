@@ -78,7 +78,7 @@ public class ScoreDAO {
         }
     }
     
-    public void savePlayer(String username, int coins) {
+    public void updateCoin_player(String username, int coins) {
     String sql = "INSERT OR REPLACE INTO User(UserName, TotalCoin) VALUES(?, ?)";
     try (Connection conn = DatabaseConnection.getConnection(); // Hàm kết nối DB của Tuấn
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -123,13 +123,13 @@ public class ScoreDAO {
     }
     
     public int getTotalCoin(String username) {
-    String sql = "SELECT total_coin FROM Players WHERE username = ?";
+    String sql = "SELECT TotalCoin FROM User WHERE username = ?";
     try (Connection conn = DatabaseConnection.getConnection();
         PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt("total_coin");
+                return rs.getInt("TotalCoin");
             }
         }
     catch (SQLException e) {

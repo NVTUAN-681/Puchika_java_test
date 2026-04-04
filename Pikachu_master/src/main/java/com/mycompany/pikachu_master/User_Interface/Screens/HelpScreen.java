@@ -5,6 +5,7 @@
 package com.mycompany.pikachu_master.User_Interface.Screens;
 
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundHelp;
+import com.mycompany.pikachu_master.Utils.SoundLoad;
 import java.awt.geom.RoundRectangle2D;
 
 /**
@@ -18,6 +19,7 @@ public class HelpScreen extends javax.swing.JFrame {
      * Creates new form HelpScreen
      */
     StartScreen start;
+    private SoundLoad audioManager = new SoundLoad();
 
     public HelpScreen(StartScreen start) {
         this.setUndecorated(true);
@@ -60,6 +62,46 @@ public class HelpScreen extends javax.swing.JFrame {
         this.darkOverlay.addMouseListener(new java.awt.event.MouseAdapter() {}); 
         this.darkOverlay.setVisible(true); 
         this.setAlwaysOnTop(true);
+        
+         // --- BẮT ĐẦU: ĐỘ NÚT < THÀNH BO GÓC TRONG SUỐT ---
+        exitButton2.setContentAreaFilled(false);
+        exitButton2.setFocusPainted(false);
+        exitButton2.setBorderPainted(false);
+        exitButton2.setOpaque(false);
+        exitButton2.setForeground(java.awt.Color.WHITE); // Chữ màu trắng
+        exitButton2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); // Chữ to rõ
+
+        // Ghi đè giao diện UI để tự vẽ hình bo góc
+        exitButton2.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                // Bật khử răng cưa cho góc bo mượt mà
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+                
+                // Hiệu ứng đổi màu nền khi di chuột / bấm
+                if (b.getModel().isPressed()) {
+                    g2.setColor(new java.awt.Color(255, 255, 255, 100)); // Trắng mờ khi bấm
+                } else if (b.getModel().isRollover()) {
+                    g2.setColor(new java.awt.Color(255, 255, 255, 50)); // Trắng rất mờ khi chuột lướt qua
+                } else {
+                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); // Nền đen trong suốt lúc bình thường
+                }
+                
+                // Vẽ nền bo góc (Độ cong 20px)
+                g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
+                
+                // Vẽ thêm cái viền trắng mỏng cho sang trọng
+                g2.setColor(java.awt.Color.WHITE);
+                g2.setStroke(new java.awt.BasicStroke(1.5f));
+                g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
+                
+                g2.dispose();
+                super.paint(g, c); // Ra lệnh vẽ cái chữ "<" đè lên trên nền
+            }
+        });
+        // --- KẾT THÚC ĐỘ NÚT ---
         //this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
 // 1. Rút nút Back ra khỏi lưới GridBagLayout
        this.getContentPane().setLayout(null);
@@ -105,6 +147,7 @@ public class HelpScreen extends javax.swing.JFrame {
 
     private void exitButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton2ActionPerformed
         // TODO add your handling code here:
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
         //start.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_exitButton2ActionPerformed

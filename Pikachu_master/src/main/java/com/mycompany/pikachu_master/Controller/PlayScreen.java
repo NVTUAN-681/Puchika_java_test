@@ -49,25 +49,29 @@ public class PlayScreen extends JPanel implements ActionListener {
     private int maxTime;
     private int currentTime;
     private int RewardCount = 0;
-    private int TileCount;
     public javax.swing.Timer countdownTimer;
     private javax.swing.JSlider timeline;
-    private int score;
+    private int RewardScore;
+    private int RewardCoin;
     private int TotalScore;
     private int reward;
     private int totalCoin;
+    private int CostBuyTime;
+    private int TimeBought;
 
-    
-    
-
-    
+   
     public PlayScreen(GameConfig config, MainScreen main ) {
         this.config = config;
         this.DTB = new ScoreDAO();
         this.main = main;
-        this.score = 0;
+        this.RewardScore = 100;
+        this.RewardCoin = RewardScore/10;
         this.TotalScore = 0;
+        this.totalCoin = DTB.getTotalCoin("tuan");
         this.reward = 0;
+        this.CostBuyTime = 500;
+        this.TimeBought = (int) (CostBuyTime/100);
+        
         
 //thiết lập thuật toán và cố định level;        
         switch(config.GetLevel()){
@@ -108,25 +112,19 @@ public class PlayScreen extends JPanel implements ActionListener {
             }
         }
         
-//Thiết lập bảng
-//        System.out.println("HardMode: " + this.level.isIsHardMode());
-//        System.out.println("rocket: " + this.level.isIsRocket());
-//        System.out.println("Algorithm: " + this.algorithm);
-//        System.out.println("level: " + this.level.getName());
+        // thiết lập bảng pika (bảng chơi chính)
         this.board = new Board(level.getRows(), level.getCols(),true);
-        if(level.isIsHardMode() == true){
-            board.initHardBoard(algorithm, level.getNoP(), level.isIsRocket());
-        }
-        else{
-            board.initBoard(algorithm, level.getNoP());
-        }
+            if(level.isIsHardMode() == true){
+                board.initHardBoard(algorithm, level.getNoP(), level.isIsRocket());
+            }
+            else{
+                board.initBoard(algorithm, level.getNoP());
+            }
         
         setLayout(new GridLayout(level.getRows(), level.getCols(), 0, 0));
         this.setOpaque(false); // Dòng này làm cho Panel không còn màu nền xám nữa
         this.setBackground(new Color(0, 0, 0, 0)); // Đảm bảo màu nền hoàn toàn trong suốt
         btnMatrix = new RoundedIconButton[level.getRows() + 2][level.getCols() + 2]; // Bao gồm cả viền trống nếu cần
-        
-        this.TileCount = (level.getRows() * level.getCols())/2;
         
         for (int i = 1; i <= level.getRows(); i++) {
             for (int j = 1; j <= level.getCols(); j++) {
@@ -140,15 +138,14 @@ public class PlayScreen extends JPanel implements ActionListener {
     }
 
     public void updateAllButtons() {
-        boolean isHiddenPhase = asianModel != null && asianModel.isHiddenPhase();
-        
+        boolean isHiddenPhase = asianModel != null && asianModel.isHiddenPhase();       
         for (int i = 1; i <= this.level.getRows(); i++) {
             for (int j = 1; j <= this.level.getCols(); j++) {
                 Cell cell = board.getCell(i, j);
                 RoundedIconButton btn = btnMatrix[i][j];
 
                 if (cell.isStatus()) {
-                    //tàng hình nè 
+                    //tàng hình 
                     if (isHiddenPhase) {
                         btn.setIcon(null);
                     } else {
@@ -169,12 +166,12 @@ public class PlayScreen extends JPanel implements ActionListener {
 
     public void shuffle() {
         algorithm.shuffle(board);
-
+        
         // --- ÉP HIỆN HÌNH LẠI KHI ĐẢO MAP ---
         if (config.GetLevel().equals("ASIAN") &&asianModel != null) {
            asianModel.reset();
         }
-
+        
         updateAllButtons();
         firstClick = null;
         firstClickBtn = null;
@@ -193,7 +190,7 @@ public class PlayScreen extends JPanel implements ActionListener {
             // Gọi hàm nhấp nháy
             blinkHint(btn1, btn2);
         } else {
-            System.out.println("Khong con cap nao de an.");
+            System.out.println("have not CellPair for eat.");
         }
     }
 
@@ -220,8 +217,8 @@ public class PlayScreen extends JPanel implements ActionListener {
         });
         blinkTimer.start();
     }
-    // ---> KẾT THÚC SỬA <---
-    
+
+    // kiểm tra bảng còn cặp nào không
     public boolean isBoardEmpty() {
         for (int i = 1; i <= this.level.getRows(); i++) {
             for (int j = 1; j <= this.level.getCols(); j++) {
@@ -233,7 +230,7 @@ public class PlayScreen extends JPanel implements ActionListener {
         return true; // Bảng đã trống trơn 100%
     }
  
- //hàm hiện thị bảng vinh danh khi dành chiến thắng   
+    //hàm hiện thị bảng vinh danh khi dành chiến thắng   
     public void showHonorScreen() {
         java.awt.Window windown = javax.swing.SwingUtilities.getWindowAncestor(this);
         if (windown instanceof MainScreen) {
@@ -242,9 +239,13 @@ public class PlayScreen extends JPanel implements ActionListener {
             HonorScreen honorScreen = new HonorScreen(main, config, level, this);
             honorScreen.setAlwaysOnTop(true);
             honorScreen.setVisible(true);
+            
+            DTB.updateCoin_player("tuan", totalCoin);
+            DTB.updateHighScore(level.getLevel(), TotalScore);
         }
     } 
     
+    //hàm hiện thị khi thua
     public void showlossScreen(){
         java.awt.Window windown = javax.swing.SwingUtilities.getWindowAncestor(this);
             if (windown instanceof MainScreen) {
@@ -253,9 +254,13 @@ public class PlayScreen extends JPanel implements ActionListener {
                 LossScreen lossScreen = new LossScreen(main, config, level, this);
                 lossScreen.setAlwaysOnTop(true);
                 lossScreen.setVisible(true);
+                
+                DTB.updateCoin_player("tuan", totalCoin);
+                DTB.updateHighScore(level.getLevel(), TotalScore);
             }
     }
     
+    //hàm cộng điểm
     public void addScore(int point, int reward){
         this.TotalScore += point;
         this.TotalScore += reward;
@@ -264,14 +269,30 @@ public class PlayScreen extends JPanel implements ActionListener {
         }
     }
     
-    public void addcoin(int coin){
-        this.totalCoin += coin;
+    //hàm cộng coin
+    public void addcoin(int coin, int reward){
+        this.totalCoin += (int) (coin);
+        this.totalCoin += (int) (reward);
         if(main != null){
             main.updateCoin(totalCoin);
         }
     }
+    
+    public void BuyTime(){
+        this.totalCoin -= CostBuyTime;
+        this.currentTime += TimeBought;
+        DTB.updateCoin_player("tuan", this.totalCoin);
+    }
 
-// hàm vẽ 
+    public void Reward(){
+        if(this.RewardCount != 0){
+            this.reward+= (int) (RewardCount * 10);
+        }
+        else{
+            this.reward = 0;
+        }
+    }
+    // hàm vẽ đường nối giữa hai ô khi chọn đúng
     private void drawPathOnOverlay() {
         java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
         if (window instanceof MainScreen) {
@@ -280,13 +301,12 @@ public class PlayScreen extends JPanel implements ActionListener {
 
             if (glassPane instanceof PathOverlay) {
                 PathOverlay overlay = (PathOverlay) glassPane;
-                // algorithm.getPath() lấy danh sách các điểm nối từ thuật toán vừa check
                 overlay.showPath(algorithm.getPath(), this.getBounds(), level.getRows(), level.getCols());
             }
         }
     }
    
-// xử lý khi chọn sai    
+    // xử lý khi chọn sai    
     private void processMismatch(RoundedIconButton clickedBtn, boolean isHidden) {       
         isProcessingMismatch = true; // Khóa không cho bấm lung tung khi đang chờ
 
@@ -320,7 +340,50 @@ public class PlayScreen extends JPanel implements ActionListener {
         firstClickBtn = null;
     }
     
+    //sự kiện nếu chạy đúng
+    private void processMatch(Cell currentCell, RoundedIconButton clickedBtn) {
+        java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (window instanceof MainScreen) {
+            MainScreen main = (MainScreen) window;
+            main.playSoundEffect("/sound/eated.wav"); 
+        }
+//Cộng diểm 
+        addScore(RewardScore, reward);
+        addcoin(RewardCoin, reward);
+// Vẽ đường đi
+        drawPathOnOverlay();
+
+        int matchedId = firstClick.getId();
+        RoundedIconButton firstBtn = firstClickBtn;
+
+        // Xóa dữ liệu & ẩn UI
+        CellPair RockketTarget = algorithm.removePair(firstClick, currentCell, board);
+        if(RockketTarget != null){
+            addScore((int) (RewardScore * 1.5), 0);// Cộng điểm nếu là tên lửa
+            addcoin(RewardScore, 0);
+        }
+        
+        firstBtn.setVisible(false);
+        clickedBtn.setVisible(false);
+        
+        updateAllButtons();
+
+        //Hiệu ứng tên lửa
+        if (matchedId == 1) { // ROCKET_ITEM_ID
+            RocketAnimation.triggerRocketEffect(this, firstBtn, clickedBtn, RockketTarget);
+                addScore((int) (RewardScore * 0.5), 0);// Cộng điểm tên lửa sau khi bắn trúng mục tiêu
+                addcoin(RewardScore, 0);
+        }        
+        checkGameState();
+        firstClick = null;
+        firstClickBtn = null;
+    }
+    
     private void handleFirstClick(Cell cell, RoundedIconButton btn, boolean isHidden) {
+        if (main != null) {
+            main.playSoundEffect("/sound/SoundTap/TapMain1.wav"); // Thay bằng tên file của bạn
+        }
+        
         firstClick = cell;
         firstClickBtn = btn;
         btn.setSelectedState(true);
@@ -328,6 +391,9 @@ public class PlayScreen extends JPanel implements ActionListener {
     }
 
     private void handleSecondClick(Cell currentCell, RoundedIconButton clickedBtn, boolean isHidden) {
+         if (main != null) {
+            main.playSoundEffect("/sound/SoundTap/TapMain2.wav"); // Thay bằng tên file của bạn
+        }
         if (isHidden) clickedBtn.setIcon(ImageLoad.getImage(currentCell.getId()));
 
         // Hủy chọn nếu click lại ô cũ
@@ -339,53 +405,13 @@ public class PlayScreen extends JPanel implements ActionListener {
         // Kiểm tra khớp cặp
         if (firstClick.getId() == currentCell.getId() && algorithm.checkPath(board, firstClick, currentCell)) {
             processMatch(currentCell, clickedBtn);
-            this.RewardCount++;
+            this.RewardCount++; // Cộng chuỗi
         } else {
             processMismatch(clickedBtn, isHidden);
-            this.RewardCount = 0;
+            this.RewardCount = 0; // hủy chuỗi
         }
-        Reward(15);
-    }
-//sự kiện nếu chạy đúng
-    private void processMatch(Cell currentCell, RoundedIconButton clickedBtn) {
-        //audioManager.playSoundEffect("/images/Sound/eated.wav");
-        // ---> SỬA CÁCH GỌI ÂM THANH ĂN Ô TẠI ĐÂY <---
-        java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
-        if (window instanceof MainScreen) {
-            MainScreen main = (MainScreen) window;
-            main.playSoundEffect("/Sound/eated.wav"); 
-        }
-//Cộng diểm 
-        addScore(100, reward);
-        addcoin(TotalScore/10);
-// Vẽ đường đi
-        drawPathOnOverlay();
-
-        int matchedId = firstClick.getId();
-        RoundedIconButton firstBtn = firstClickBtn;
-
-        // Xóa dữ liệu & ẩn UI
-        CellPair RockketTarget = algorithm.removePair(firstClick, currentCell, board);
-        if(RockketTarget != null){
-            addScore(150, 0);// Cộng điểm nếu là tên lửa
-            addcoin(TotalScore/10);
-        }
-        
-        firstBtn.setVisible(false);
-        clickedBtn.setVisible(false);
-        
-        updateAllButtons();
-
-        //Hiệu ứng tên lửa
-        if (matchedId == 1) { // ROCKET_ITEM_ID
-            RocketAnimation.triggerRocketEffect(this, firstBtn, clickedBtn, RockketTarget);
-                addScore(50, 0);// Cộng điểm tên lửa sau khi bắn trúng mục tiêu
-                addcoin(TotalScore/10);
-        }
-        checkGameState();
-        
-        firstClick = null;
-        firstClickBtn = null;
+        // Tăng điểm cộng khi có chuỗi
+        Reward();
     }
 
 // Hàm kiểm tra thắng thua    
@@ -393,8 +419,8 @@ public class PlayScreen extends JPanel implements ActionListener {
         if (isBoardEmpty()) {
             stopTimer();
             stopAsianTimer();
-            DTB.savePlayer("tuan", totalCoin);
-            DTB.updateHighScore(level.getLevel(), TotalScore);
+            
+            // chèn dữ liệu vào database
             showHonorScreen();
             
         } else if (!algorithm.hasAnyMatch(board)) {
@@ -408,26 +434,19 @@ public class PlayScreen extends JPanel implements ActionListener {
         firstClick = null;
         firstClickBtn = null;
     }
-   
-    public void Reward(int point){
-        if(this.RewardCount != 0){
-            this.reward+= point;
-        }
-        else{
-            this.reward = 0;
-        }
-    }
     
     public void stopTimer() {
         if (countdownTimer != null && countdownTimer.isRunning()) {
             countdownTimer.stop();
         }
     }
+    
     public void resumeTimer() {
         if (countdownTimer != null && !countdownTimer.isRunning() && currentTime > 0) {
             countdownTimer.start();
         }
     }  
+    
     public void addTimer(int time){
         currentTime = currentTime + time;
     }
@@ -438,61 +457,63 @@ public class PlayScreen extends JPanel implements ActionListener {
     public int get_TotalScore(){
         return TotalScore;
     }
+    public int get_Totalcoin(){
+        return totalCoin;
+    }
     public String get_Level(){
         return level.getLevel();
     }
     
-public void initTimer(javax.swing.JSlider externalTimeline) {
-    this.timeline = externalTimeline;
-    this.maxTime = level.getTimeLimit();
-    
-    if (maxTime <= 0) maxTime = 120;
-    
-    this.currentTime = maxTime;
-    
-    if (timeline != null) {
-        timeline.setMaximum(maxTime);
-        timeline.setMinimum(0);
-        timeline.setValue(maxTime);
-    }
+    public void initTimer(javax.swing.JSlider externalTimeline) {
+        this.timeline = externalTimeline;
+        this.maxTime = level.getTimeLimit();
 
-    if (countdownTimer != null) {
-        countdownTimer.stop(); // Dừng cái cũ nếu có (tránh chạy chồng chéo)
-    }
+        if (maxTime <= 0) maxTime = 120;
 
-    countdownTimer = new javax.swing.Timer(1000, new java.awt.event.ActionListener() {
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-            currentTime--;
-            
-            if (timeline != null) {
-                timeline.setValue(currentTime);
-                timeline.repaint(); // <--- Thêm dòng này để ép UI vẽ lại giá trị mới
-            }
+        this.currentTime = maxTime;
 
-            System.out.println("Thoi gian con: " + currentTime + " giay");
-            if(currentTime > maxTime){
-                currentTime = maxTime;
-            }
-            if (currentTime <= 0) {
-                countdownTimer.stop();
-                showlossScreen();
-           }
+        if (timeline != null) {
+            timeline.setMaximum(maxTime);
+            timeline.setMinimum(0);
+            timeline.setValue(maxTime);
         }
-    });
-    countdownTimer.start();
-}
+
+        if (countdownTimer != null) {
+            countdownTimer.stop(); // Dừng cái cũ nếu có (tránh chạy chồng chéo)
+        }
+
+        countdownTimer = new javax.swing.Timer(1000, new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                currentTime--;
+
+                if (timeline != null) {
+                    timeline.setValue(currentTime);
+                    timeline.repaint(); // <--- Thêm dòng này để ép UI vẽ lại giá trị mới
+                }
+
+                System.out.println("Thoi gian con: " + currentTime + " giay");
+                if(currentTime > maxTime){
+                    currentTime = maxTime;
+                }
+                if (currentTime <= 0) {
+                    countdownTimer.stop();
+                    showlossScreen();
+               }
+            }
+        });
+        countdownTimer.start();
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (isProcessingMismatch) return;
 
         RoundedIconButton clickedBtn = (RoundedIconButton) e.getSource();
 
-        // TỐI ƯU 1: Lấy tọa độ trực tiếp (Giả định em đã thêm getPosX/Y vào RoundedIconButton)
+        //Lấy tọa độ trực tiếp
         int r = clickedBtn.getRows();
         int c = clickedBtn.getCols();
-//        int[] coords = findCoords(clickedBtn);
-//        int r = coords[0], c = coords[1];
         
         if (r == -1 || !board.getCell(r, c).isStatus()) return;
 

@@ -26,6 +26,7 @@ public class ImageLoad {
     public static final String PATH_1 = "/images/Picture_button/BackgroundButtonInMain.png";
     public static final String PATH_2 = "/images/Picture_button/BackgroundButtonMainGame.png";
     public static final String PATH_3 = "/images/Picture_button/BackgroundButtonLight.png";
+    public static final String PATH_4 = "/images/Picture_button/BackgroundButtonLight_Dark.png";
     // Hàm load toàn bộ 21 ảnh vào bộ nhớ khi bắt đầu game
     public static void loadAllImagesPika() {
         
@@ -42,7 +43,7 @@ public class ImageLoad {
                     imageMap.put(i, new ImageIcon(scaledImg));
                 }
                 else{
-                    System.err.println("❌ Not found: " + path);
+                    System.err.println(" Path Not found: " + path);
                 }
             } catch (Exception e) {
                 System.out.println("ID not found: " + i);
@@ -67,15 +68,17 @@ public class ImageLoad {
     public static void BackgroundButtonsLoad() {
         loadBg("MENU_FRAME", 1, 650, 60, 25);
     }
-    
-    // ---> 3. HÀM MỚI: CHỈ CẦN TRUYỀN SỐ 1 HOẶC 2 <---
+   // ---> 3. HÀM MỚI: TRUYỀN SỐ 1, 2, 3 HOẶC 4 <---
    public static void loadBg(String key, int loaiAnh, int w, int h, int corner) {
-        // Phân tách rõ ràng 3 loại ảnh
+        // Phân tách rõ ràng 4 loại ảnh
         String path = PATH_1; // Mặc định là 1 (Main Screen)
+        
         if (loaiAnh == 2) {
-            path = PATH_2;    // Dark side
+            path = PATH_2;       // Dark side
         } else if (loaiAnh == 3) {
-            path = PATH_3;    // Light side
+            path = PATH_3;       // Light side
+        } else if (loaiAnh == 4) {
+            path = PATH_4;       // Light_Dark
         }
         
         URL imgURL = ImageLoad.class.getResource(path);

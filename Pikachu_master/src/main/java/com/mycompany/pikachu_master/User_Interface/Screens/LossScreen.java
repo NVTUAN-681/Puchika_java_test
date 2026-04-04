@@ -77,7 +77,7 @@ public class LossScreen extends javax.swing.JFrame {
             }
         });
         //this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); 
-        ImageLoad.loadBg("PAUSE_BTN", 2, 250, 40, 10);
+        ImageLoad.loadBg("PAUSE_BTN", 4, 250, 40, 10);
         setupAllButtonIcons();
         
         this.setMinimumSize(new java.awt.Dimension(300, 400));
@@ -97,20 +97,9 @@ public class LossScreen extends javax.swing.JFrame {
         //this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         
         this.main.stopMusic();
-        audioManager.playBGM("/images/Sound/Loss.wav");
+        audioManager.playBGM("/Sound/Loss.wav");
         this.updateScore(play.get_TotalScore());
         
-        // Bắt sự kiện bấm nút X
-//        this.addWindowListener(new java.awt.event.WindowAdapter() {
-//            @Override
-//            public void windowClosing(java.awt.event.WindowEvent e) {
-//               main.setEnabled(true);
-//                main.dispose(); 
-//                StartScreen pika = new StartScreen(config);
-//                pika.setLevel(config.GetLevel());
-//                pika.setVisible(true); // Báo màn hình chính đếm thời gian tiếp
-//            }
-//        });
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -126,40 +115,38 @@ public class LossScreen extends javax.swing.JFrame {
     
     public void updateScore(int newScore) {
     // 1. Tính tổng điểm cuối cùng
-    this.currentTotalScore = newScore;
-    this.displayedScore = 0;
+        this.currentTotalScore = newScore;
+        this.displayedScore = 0;
 
-    // 2. Thiết lập cấu hình thời gian
-    final int TotalAnimationTime = 2000;
-    final int TimeDelay = 20;            
-    
-    // 3. Tính toán số bước nhảy và giá trị mỗi bước
-    int totalSteps = TotalAnimationTime / TimeDelay; // Tổng số lần Timer sẽ chạy
-    // Mỗi bước cộng bao nhiêu điểm (dùng số thực để tránh mất mát dữ liệu khi chia)
-    final double incrementPerStep = (double) currentTotalScore / totalSteps;
+        // 2. Thiết lập cấu hình thời gian
+        final int TotalAnimationTime = 2000;
+        final int TimeDelay = 20;            
 
-    javax.swing.Timer scoreTimer = new javax.swing.Timer(TimeDelay, null);
-    scoreTimer.addActionListener(new java.awt.event.ActionListener() {
-        private int currentStep = 0;
+        // 3. Tính toán số bước nhảy và giá trị mỗi bước
+        int totalSteps = TotalAnimationTime / TimeDelay; // Tổng số lần Timer sẽ chạy
+        final double incrementPerStep = (double) currentTotalScore / totalSteps;
 
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-            currentStep++;
-            
-            if (currentStep <= totalSteps) {
-                displayedScore = (int) (currentStep * incrementPerStep);
-                if (displayedScore > currentTotalScore) 
-                    displayedScore = currentTotalScore;
-                
-                scoreLabel.setText(String.valueOf(displayedScore));
-            } else {
-                // Bước cuối cùng: Chốt hạ con số chính xác nhất
-                scoreLabel.setText(String.valueOf(currentTotalScore));
-                ((javax.swing.Timer) e.getSource()).stop();
+        javax.swing.Timer scoreTimer = new javax.swing.Timer(TimeDelay, null);
+        scoreTimer.addActionListener(new java.awt.event.ActionListener() {
+            private int currentStep = 0;
+
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                currentStep++;
+
+                if (currentStep <= totalSteps) {
+                    displayedScore = (int) (currentStep * incrementPerStep);
+                    if (displayedScore > currentTotalScore) 
+                        displayedScore = currentTotalScore;
+
+                    scoreLabel.setText(String.valueOf(displayedScore));
+                } else {
+                    // Bước cuối cùng: Chốt hạ con số chính xác nhất
+                    scoreLabel.setText(String.valueOf(currentTotalScore));
+                    ((javax.swing.Timer) e.getSource()).stop();
+                }
             }
-        }
     });
-    
     scoreTimer.start();
 }
     
@@ -208,10 +195,10 @@ public class LossScreen extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 150;
-        gridBagConstraints.ipady = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(18, 34, 0, 36);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 220;
+        gridBagConstraints.ipady = 14;
+        gridBagConstraints.insets = new java.awt.Insets(130, 30, 0, 30);
         getContentPane().add(retryButton, gridBagConstraints);
 
         exitButton.setText("THOÁT");
@@ -220,10 +207,10 @@ public class LossScreen extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 158;
-        gridBagConstraints.ipady = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 34, 161, 36);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 288;
+        gridBagConstraints.ipady = 14;
+        gridBagConstraints.insets = new java.awt.Insets(0, 30, 116, 30);
         getContentPane().add(exitButton, gridBagConstraints);
 
         scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 48)); // NOI18N
@@ -237,23 +224,8 @@ public class LossScreen extends javax.swing.JFrame {
 
     private void retryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_retryButtonActionPerformed
         // TODO add your handling code here:
-       // config = new GameConfig(6, 5,150, "");
-       //this.main.playBGM();
+      audioManager.playSoundEffect("/sound/SoundTap/tap.wav"); // Tiếng click
        audioManager.stopBGM();
-       String levelName = config.GetLevel(); 
-        
-        if (levelName.equalsIgnoreCase("AFRICA")) {
-            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
-        } else if (levelName.equalsIgnoreCase("ASIAN")) {
-            audioManager.playBGM("/Sound/SoundAsian.wav");
-        } else if (levelName.equalsIgnoreCase("EUROPE")) {
-            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
-        } else {
-            // Nhạc mặc định nếu người chơi không chọn màn mà bấm Play ngay từ đầu
-            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
-        }
-
-       //main.playBGM();
        main.setEnabled(true);
        main.resertGame(config, level);
        this.dispose();
@@ -261,6 +233,7 @@ public class LossScreen extends javax.swing.JFrame {
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         // TODO add your handling code here:
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav"); // Tiếng click
         audioManager.stopBGM();
         
         StartScreen pika = new StartScreen(config, level, play);

@@ -80,7 +80,7 @@ public class HonorScreen extends javax.swing.JFrame {
             }
         });
           
-        ImageLoad.loadBg("PAUSE_BTN", 2, 300, 40, 10);
+        ImageLoad.loadBg("PAUSE_BTN", 4, 250, 40, 10);
         setupAllButtonIcons();
         
         this.setMinimumSize(new java.awt.Dimension(300, 400));
@@ -100,10 +100,10 @@ public class HonorScreen extends javax.swing.JFrame {
         
         this.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         setEnabled(true);
-        audioManager.playBGM("/Sound/Winner.wav");
+        
         this.updateScore(play.get_TotalScore());
         this.main.stopMusic();
-
+        audioManager.playBGM("/sound/SoundEndMain/Winner.wav");
         
         // ---> KÍCH HOẠT HIỆU ỨNG PHÁO HOA <---
         fireworks = new FireWorks();
@@ -210,11 +210,11 @@ public class HonorScreen extends javax.swing.JFrame {
         exitButton.addActionListener(this::exitButtonActionPerformed);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 78;
         gridBagConstraints.ipady = 7;
-        gridBagConstraints.insets = new java.awt.Insets(6, 74, 58, 76);
+        gridBagConstraints.insets = new java.awt.Insets(6, 30, 58, 30);
         getContentPane().add(exitButton, gridBagConstraints);
 
         newButton.setText("VÁN MỚI");
@@ -226,7 +226,7 @@ public class HonorScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 70;
         gridBagConstraints.ipady = 7;
-        gridBagConstraints.insets = new java.awt.Insets(70, 74, 0, 76);
+        gridBagConstraints.insets = new java.awt.Insets(100, 30, 0, 30);
         getContentPane().add(newButton, gridBagConstraints);
 
         scoreLabel.setFont(new java.awt.Font("Segoe UI", 3, 48)); // NOI18N
@@ -247,20 +247,11 @@ public class HonorScreen extends javax.swing.JFrame {
 
     private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
         // TODO add your handling code here:
+       //this.main.playBGM();
+       //audioManager.playBGM("/images/Sound/Winner.wav");
+       //audioManager.stopBGM();
+       audioManager.playSoundEffect("/sound/SoundTap/tap.wav"); // Tiếng click
         audioManager.stopBGM();
-        String levelName = config.GetLevel(); 
-        
-        if (levelName.equalsIgnoreCase("AFRICA")) {
-            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
-        } else if (levelName.equalsIgnoreCase("ASIAN")) {
-            audioManager.playBGM("/Sound/SoundAsian.wav");
-        } else if (levelName.equalsIgnoreCase("EUROPE")) {
-            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
-        } else {
-            // Nhạc mặc định nếu người chơi không chọn màn mà bấm Play ngay từ đầu
-            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
-        }
-
         main.setEnabled(true);
         main.resertGame(config, level);
         this.dispose();
@@ -268,6 +259,8 @@ public class HonorScreen extends javax.swing.JFrame {
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         // TODO add your handling code here:
+         audioManager.playSoundEffect("/sound/SoundTap/tap.wav"); // Tiếng click
+        this.main.stopMusic();
         audioManager.stopBGM();
         StartScreen pika = new StartScreen(config, level, play);
         pika.setLevel(config.GetLevel());

@@ -7,13 +7,10 @@ package com.mycompany.pikachu_master.User_Interface.Screens;
 import com.mycompany.pikachu_master.Controller.GameConfig;
 import com.mycompany.pikachu_master.Controller.PlayScreen;
 import com.mycompany.pikachu_master.Model.LevelType;
-import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
-//import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundStartScreen;
 import com.mycompany.pikachu_master.Utils.ImageLoad;
 import com.mycompany.pikachu_master.Utils.Button_Icon;
 import com.mycompany.pikachu_master.Utils.SoundLoad;
-import com.mycompany.pikachu_master.Model.ThemeManager;
 
 /**
  *
@@ -29,51 +26,44 @@ public class StartScreen extends javax.swing.JFrame {
     private GameConfig config;
     private LevelType level;
     private PlayScreen play;
-    
+
     private SoundLoad audioManager = new SoundLoad();
-    
-    private int currentCoin;
-    
+
     public StartScreen(GameConfig config, LevelType level, PlayScreen play) {
-        setContentPane(new BackgroundStartScreen());        
+        setContentPane(new BackgroundStartScreen());
         initComponents();
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         this.config = config;
         this.level = level;
         this.play = play;
+        
 // tải ảnh trước khi bắt đầu trò chơi        
         ImageLoad.loadAllImagesPika();
         ImageLoad.BackgroundButtonsLoad();
         setupAllButtonIcons();
-        // 3. GỌI NHẠC NỀN KHI VỪA MỞ MÀN HÌNH CHÍNH LÊN
-        audioManager.playBGM("/Sound/SoundStart.wav"); 
+        
+// GỌI NHẠC NỀN KHI VỪA MỞ MÀN HÌNH CHÍNH LÊN
+        audioManager.playBGM("/Sound/SoundStart.wav");
     }
-    
-    public void setLevel(String Level){
+
+    public void setLevel(String Level) {
         levelButton.setText("CẤP ĐỘ: " + Level);
     }
-    
-       
-    public void UpdateLevel(String Level){
+
+    public void UpdateLevel(String Level) {
         this.config = new GameConfig(Level);
         this.level = LevelType.getByName(Level);
-//        setupAllButtonIcons();
+
     }
-    
-    // Hàm này sẽ được LevelScreen gọi khi bấm nút chọn màn
+
+// Hàm này sẽ được LevelScreen gọi khi bấm nút chọn màn
     public void setGameTheme(String themeSide) {
-        // Vẫn lưu phe vào Kho lưu trữ chung để lát nữa MainScreen mở lên tự lấy
+// Vẫn lưu theme vào Kho lưu trữ chung để lát nữa MainScreen mở lên tự lấy
         com.mycompany.pikachu_master.Model.ThemeManager.currentTheme = themeSide;
-        
-        // ---> XÓA (HOẶC COMMENT) DÒNG NÀY ĐỂ START SCREEN KHÔNG BỊ ĐỔI NỀN <---
-        // this.getContentPane().repaint(); 
     }
-    
+
     private void setupAllButtonIcons() {
-        // Giả sử bạn có 1 cái khung tên là "KhungGo.png" (hoặc cứ dùng lại ảnh cũ tạm cũng được)
-        //this.setLayout(new java.awt.GridBagLayout()); 
-        //this.add(myButton, new java.awt.GridBagConstraints());
-        // Gọi hàm: truyền nút, truyền ảnh khung, và TRUYỀN CHỮ
+// Gọi hàm: truyền nút, truyền ảnh khung, và TRUYỀN CHỮ
         Button_Icon.applyCachedIcons(playButton, "CHƠI NGAY");
         Button_Icon.applyCachedIcons(levelButton, "CẤP ĐỘ");
         Button_Icon.applyCachedIcons(maxButton, "THÀNH TÍCH CAO NHẤT");
@@ -81,8 +71,7 @@ public class StartScreen extends javax.swing.JFrame {
         Button_Icon.applyCachedIcons(instructionutton, "HƯỚNG DẪN");
         Button_Icon.applyCachedIcons(exitButton, "THOÁT");
     }
-    
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -195,15 +184,22 @@ public class StartScreen extends javax.swing.JFrame {
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
 // Phát tiếng click chuột
         audioManager.stopBGM();
-        audioManager.playSoundEffect("");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
+        if (com.mycompany.pikachu_master.Model.ThemeManager.currentTheme == null) {
+// Cho mặc định là giao diện Sáng nếu chưa chọn
+            com.mycompany.pikachu_master.Model.ThemeManager.currentTheme = "LIGHT"; 
+        }
         MainScreen Main = new MainScreen(config, this.level);
         Main.setVisible(true);
-        this.dispose();
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            this.dispose();
+        });
     }//GEN-LAST:event_playButtonActionPerformed
 
     private void maxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maxButtonActionPerformed
-        // TODO add your handling code here:
-        audioManager.playSoundEffect("");
+        // TODO add your handling code here
+       audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
+ 
         HighScoreScreen Max = new HighScoreScreen(this, play);
         Max.setVisible(true);
         Max.showHighScore();
@@ -211,34 +207,32 @@ public class StartScreen extends javax.swing.JFrame {
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         // TODO add your handling code here:
-        audioManager.playSoundEffect("");
         System.exit(0);
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void settingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingButtonActionPerformed
         // TODO add your handling code here:
-        audioManager.playSoundEffect("");
+        audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
         SettingMenuScreen set = new SettingMenuScreen(this);
         set.setVisible(true);
-        //this.setVisible(false);
     }//GEN-LAST:event_settingButtonActionPerformed
 
     private void instructionuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instructionuttonActionPerformed
         // TODO add your handling code here:
-        //audioManager.playSoundEffect("");
+       audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
+        
         HelpScreen Instruct = new HelpScreen(this);
         Instruct.setAlwaysOnTop(true);
         Instruct.setLocationRelativeTo(this);
         Instruct.setVisible(true);
-        //this.setVisible(false);
     }//GEN-LAST:event_instructionuttonActionPerformed
 
     private void levelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_levelButtonActionPerformed
         // TODO add your handling code here:
-        audioManager.playSoundEffect("");
+       audioManager.playTransitionSound("/sound/SoundTap/NextScreen.wav");
+        
         LevelScreen lev = new LevelScreen(this);
         lev.setVisible(true);
-        //this.setVisible(false);
     }//GEN-LAST:event_levelButtonActionPerformed
 
     /**
@@ -262,11 +256,12 @@ public class StartScreen extends javax.swing.JFrame {
         }
         //</editor-fold>
 
+
+        /* Create and display the form */
         LevelType level = LevelType.START;
         PlayScreen play = null;
         GameConfig config = new GameConfig(level.getLevel());
-    /* Create and display the form */
-    java.awt.EventQueue.invokeLater (() -> new StartScreen(config, level, play).setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new StartScreen(config, level, play).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

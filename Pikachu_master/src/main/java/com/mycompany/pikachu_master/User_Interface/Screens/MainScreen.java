@@ -9,7 +9,6 @@ import com.mycompany.pikachu_master.Controller.PlayScreen;
 import com.mycompany.pikachu_master.Effect.PathOverlay;
 import com.mycompany.pikachu_master.Model.LevelType;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundMain;
-//import com.mycompany.pikachu_master.User_Interface.Components.cus;
 import com.mycompany.pikachu_master.User_Interface.Components.BackgroundStartScreen;
 import com.mycompany.pikachu_master.Utils.SoundLoad;
 import java.awt.event.ActionEvent;
@@ -43,14 +42,6 @@ public class MainScreen extends javax.swing.JFrame {
     
     private SoundLoad audioManager = new SoundLoad();
     
-    public int getHintCount() {
-        return hintCount;
-    }
-
-    public int getShuffleCount() {
-        return shuffleCount;
-    }
-    
     public MainScreen(GameConfig config, LevelType level) {
         initComponents();
         this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
@@ -59,7 +50,7 @@ public class MainScreen extends javax.swing.JFrame {
         this.play = new PlayScreen(config, this);
         this.hintCount = 3;
         this.shuffleCount = 3;
-        //setContentPane(new BackgroundMain());
+
         // --- THÊM CỤM NÀY ĐỂ MÀN CHƠI TỰ CHỌN ĐÚNG NỀN ---
         javax.swing.JPanel dynamicBg = new javax.swing.JPanel() {
             @Override
@@ -78,7 +69,7 @@ public class MainScreen extends javax.swing.JFrame {
         this.setMinimumSize(new java.awt.Dimension(800, 600));
         play.initTimer(this.Timeline);
         
-        // ---> THÊM 3 DÒNG NÀY ĐỂ KÍCH HOẠT LỚP VẼ ĐƯỜNG ĐI <---
+        // KÍCH HOẠT LỚP VẼ ĐƯỜNG ĐI
         PathOverlay pathOverlay = new PathOverlay();
         this.setGlassPane(pathOverlay);
         pathOverlay.setVisible(true);
@@ -91,30 +82,30 @@ public class MainScreen extends javax.swing.JFrame {
         
         playMusicByLevel();
         resetScoreDisPlay();
-        resetCoinDisplay();
-        //căn chỉnh vị trí.
-        // Căn chỉnh vị trí và kích thước linh động cho bảng Pokemon
-        // Căn chỉnh vị trí và Kích thước (Scale) động cho TOÀN BỘ màn hình
+        resetCoinDisplay(play.get_Totalcoin());
+
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 updateGameLayout(level);
             }
         });
+        // Lấy trước kích thước màn hình PC của bạn
+        java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+        this.setSize(screenSize); // Ép kích thước ngay lập tức
         
-        javax.swing.SwingUtilities.invokeLater(()->{
-            updateGameLayout(level);
-        });
+        // Ra lệnh dàn layout TRƯỚC KHI màn hình được setVisible
+        updateGameLayout(level);
     }
 
-    // ---> THÊM HÀM NÀY VÀO ĐỂ TRANG TRÍ THANH TOP BAR <---
+// ---> THÊM HÀM NÀY VÀO ĐỂ TRANG TRÍ THANH TOP BAR <---
     private void styleTopBar() {
         // 1. Chỉnh màu chữ: Tiêu đề màu Trắng, Chỉ số màu Vàng Gold
         java.awt.Color textColor = java.awt.Color.WHITE;
         java.awt.Color valueColor = new java.awt.Color(255, 215, 0); // Vàng Gold
 
         levelLabel.setForeground(textColor);
-        PointLabel.setForeground(textColor);
+        ScoreLabel.setForeground(textColor);
         coin.setForeground(textColor);
 
         
@@ -144,10 +135,10 @@ public class MainScreen extends javax.swing.JFrame {
         });
 
 
-        // 4. Ẩn cái đường kẻ ngang mặc định đi cho đỡ chướng mắt
+        // Ẩn đường kẻ ngang mặc định
         jSeparator1.setVisible(false);
 
-        // 5. "Độ" lại giao diện cho cái JSlider (Thanh thời gian)
+        // giao diện cho JSlider Thanh thời gian
         Timeline.setUI(new javax.swing.plaf.basic.BasicSliderUI(Timeline) {
             @Override
             public void paintTrack(java.awt.Graphics g) {
@@ -156,7 +147,7 @@ public class MainScreen extends javax.swing.JFrame {
 
                 java.awt.Rectangle t = trackRect;
 
-                // Vẽ cái nền của thanh thời gian (Màu xám đen)
+                // Vẽ nền của thanh thời gian (Màu xám đen)
                 g2d.setColor(new java.awt.Color(50, 50, 50, 200));
                 int trackHeight = 16; // Độ dày của thanh
                 g2d.fillRoundRect(t.x, t.y + (t.height - trackHeight) / 2, t.width, trackHeight, trackHeight, trackHeight);
@@ -169,9 +160,9 @@ public class MainScreen extends javax.swing.JFrame {
 
                 // Đổi màu cảnh báo nếu sắp hết giờ (dưới 20%)
                 if (((double) Timeline.getValue() / Timeline.getMaximum()) < 0.2) {
-                    g2d.setColor(new java.awt.Color(255, 50, 50)); // Đỏ lè
+                    g2d.setColor(new java.awt.Color(255, 50, 50)); // Đỏ
                 } else {
-                    g2d.setColor(new java.awt.Color(0, 200, 100)); // Xanh lá cây mát mắt
+                    g2d.setColor(new java.awt.Color(0, 200, 100)); // Xanh lá cây 
                 }
 
                 // Vẽ phần thời gian còn lại
@@ -180,103 +171,106 @@ public class MainScreen extends javax.swing.JFrame {
 
             @Override
             public void paintThumb(java.awt.Graphics g) {
-                // Giấu luôn cái cục kéo tròn tròn đi, vì đây là thanh thời gian chứ không phải chỗ chỉnh âm lượng
             }
         });
 
     }
     // ---> KẾT THÚC HÀM TRANG TRÍ <---
+    
 //hàm hiện thị thua cuộc
-    private void handleGameOver() {
-        //javax.swing.JOptionPane.showMessageDialog(this, "Hết giờ! Bạn đã thua cuộc.", "Game Over", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-        audioManager.stopBGM();
-        this.setEnabled(false);
-        LossScreen loss = new LossScreen(this, config, level, play);
-        loss.setAlwaysOnTop(true);
-        loss.setVisible(true);
-    }
+//    private void handleGameOver() {
+//        audioManager.stopBGM();
+//        this.setEnabled(false);
+//        LossScreen loss = new LossScreen(this, config, level, play);
+//        loss.setAlwaysOnTop(true);
+//        loss.setVisible(true);
+//    }
     
     public void updateScore(int newScore) {
-        this.currentTotalScore = newScore;
-
-        // Tạo hiệu ứng nhảy số từ displayedScore đến currentTotalScore
-        javax.swing.Timer scoreTimer = new javax.swing.Timer(20, null);
-        scoreTimer.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-//                    displayedScore = 0;
-//                    PointLabel.setText("ĐIỂM: " + displayedScore);
-                if (displayedScore < currentTotalScore) {
-                    displayedScore += 5; // Tốc độ tăng điểm
-                    if (displayedScore > currentTotalScore) displayedScore = currentTotalScore;
-                    PointLabel.setText("ĐIỂM: " + displayedScore);
-                } else {
-                    scoreTimer.stop();
-                }
+    this.currentTotalScore = newScore;
+    // Tạo hiệu ứng nhảy số từ displayedScore đến currentTotalScore
+    javax.swing.Timer ScoreTimer = new javax.swing.Timer(20, null);
+    ScoreTimer.addActionListener(new java.awt.event.ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            if (displayedScore < currentTotalScore) {
+                displayedScore += 5; // Tốc độ tăng điểm
+                if (displayedScore > currentTotalScore) displayedScore = currentTotalScore;
+                    ScoreLabel.setText("Điểm: " + displayedScore);
+            } else {
+                ScoreTimer.stop();
             }
-        });
-        scoreTimer.start();
-    }
-
+        }
+    });
+    ScoreTimer.start();
+}
+   
     public void updateCoin(int newCoin){
         this.currentTotalCoin = newCoin;
 
         // Tạo hiệu ứng nhảy số từ displayedCoin đến currentTotalCoin
-        javax.swing.Timer scoreTimer = new javax.swing.Timer(20, null);
-        scoreTimer.addActionListener(new java.awt.event.ActionListener() {
+        javax.swing.Timer ScoreLabel = new javax.swing.Timer(20, null);
+        ScoreLabel.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-//                    displayedCoin = 0;
-//                    PointLabel.setText("ĐIỂM: " + displayedCoin);
                 if (displayedCoin < currentTotalCoin) {
                     displayedCoin += 5; // Tốc độ tăng điểm
                     if (displayedCoin > currentTotalCoin) displayedCoin = currentTotalCoin;
                     coin.setText("Vàng: " + displayedCoin);
                 } else {
-                    scoreTimer.stop();
+                    ScoreLabel.stop();
                 }
             }
         });
-        scoreTimer.start();
+        ScoreLabel.start();
     }
 
-    public void resetCoinDisplay(){
-        this.currentTotalCoin = 0;
-        this.displayedCoin = 0;
+    public void resetCoinDisplay(int currentTotalCoin){
+        this.currentTotalCoin = currentTotalCoin;
+        this.displayedCoin = currentTotalCoin;
         coin.setText("Vàng: " + displayedCoin);
     }
 
     public void resetScoreDisPlay(){
             this.currentTotalScore = 0;
             this.displayedScore = 0;
-            PointLabel.setText("ĐIỂM: 0");
+            ScoreLabel.setText("ĐIỂM: 0");
         }
     
-    private void playMusicByLevel() {
-        // Lấy tên của Level hiện tại (AFRICA, ASIAN, EUROPE...)
-        String levelName = config.GetLevel(); 
+//âm thanh    
+    void playMusicByLevel() {
+        // Lấy tên của Level hiện tại và viết hoa hết để dễ so sánh
+        String levelName = config.GetLevel().toUpperCase(); 
         
-        if (levelName.equalsIgnoreCase("AFRICA")) {
-            audioManager.playBGM("/sound/SoundAfrica_Europe.wav");
-        } else if (levelName.equalsIgnoreCase("ASIAN")) {
-            audioManager.playBGM("/sound/SoundAsian.wav");
-        } else if (levelName.equalsIgnoreCase("EUROPE")) {
-            audioManager.playBGM("/sound/SoundAfrica_Europe.wav");
+        // --- PHE TỐI ---
+        if (levelName.equals("AFRICA")) {
+            audioManager.playBGM("/sound/SoundBackgroundDark/SoundAfrica.wav");
+        } else if (levelName.equals("ASIAN")) {
+            audioManager.playBGM("/sound/SoundBackgroundDark/SoundAsian.wav");
+        } else if (levelName.equals("EUROPE")) {
+            audioManager.playBGM("/sound/SoundBackgroundDark/SoundEurope.wav");
+            
+        // --- PHE SÁNG ---
+        } else if (levelName.equals("EASY")) {
+            audioManager.playBGM("/sound/SoundBackgroundLight/SoundEasy.wav");
+        } else if (levelName.equals("NORMAL")) {
+            audioManager.playBGM("/sound/SoundBackgroundLight/SoundNormal.wav");
+        } else if (levelName.equals("HARD")) {
+            audioManager.playBGM("/sound/SoundBackgroundLight/SoundHard.wav");
+            
+        // --- MẶC ĐỊNH (PHÒNG HỜ) ---
         } else {
-            // Nhạc mặc định nếu người chơi không chọn màn mà bấm Play ngay từ đầu
-            audioManager.playBGM("/Sound/SoundAfrica_Europe.wav");
+            audioManager.playBGM("/sound/SoundBackground/SoundStart.wav");
         }
     }
     
-    // Thêm hàm này vào MainScreen.java
     public void playSoundEffect(String path) {
-        // DÒNG NÀY RẤT QUAN TRỌNG: Nó sẽ in ra dòng chữ để chứng minh tín hiệu đã tới đây
-//        System.out.println("Tín hiệu đã tới MainScreen! Đang chuẩn bị phát: " + path);
+        System.out.println("MainScreen has signal! Audio is playing: " + path);
         
         if (audioManager != null) {
             audioManager.playSoundEffect(path);
         } else {
-            System.out.println("audioManager bị null!");
+            System.out.println("Error: audioManager not have seen!");
         }
     }
 
@@ -294,15 +288,12 @@ public class MainScreen extends javax.swing.JFrame {
         }
 
         int newTopBarHeight = (int) (80 * scaleRatio);
-
+        // set font text
         int newFontSize = (int) (14 * scaleRatio);
         java.awt.Font newFont = new java.awt.Font("Segoe UI", java.awt.Font.BOLD, newFontSize);
         levelLabel.setFont(newFont);
-        //level_point.setFont(newFont);
-        PointLabel.setFont(newFont);
-       // point.setFont(newFont);
+        ScoreLabel.setFont(newFont);
         coin.setFont(newFont);
-        //coinLabel.setFont(newFont);
 
         int newTimelineWidth = (int) (240 * scaleRatio);
         int newTimelineHeight = (int) (30 * scaleRatio);
@@ -327,15 +318,12 @@ public class MainScreen extends javax.swing.JFrame {
             topBarWidth = screenWidth;
         }
         int topBarX = (screenWidth - topBarWidth) / 2;
-        //getContentPane().add(topBarPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(topBarX, 10, topBarWidth, newTopBarHeight));
         topBarPanel.setBounds(topBarX, 10, topBarWidth, newTopBarHeight);
-        
-        // ==========================================
-        // PHẦN 2: SCALE BẢNG POKEMON (GAME BOARD)
-        // ==========================================
+
+        // SCALE BẢNG POKEMON (GAME BOARD)
         int padding = (int) (40 * scaleRatio); // Lề
 
-        // Không gian khả dụng tối đa cho play (Cái hộp chứa)
+        // boder mainBoard 
         int maxBoardWidth = screenWidth - (padding * 2);
         int maxBoardHeight = screenHeight - newTopBarHeight - (padding * 2);
 
@@ -355,7 +343,7 @@ public class MainScreen extends javax.swing.JFrame {
         int boardWidth = finalTileSize * numCols;
         int boardHeight = finalTileSize * numRows;
 
-        // Đặt giới hạn tối thiểu (giữ nguyên logic cũ)
+        // Đặt giới hạn tối thiểu
         if (boardWidth < 400) {
             boardWidth = 400;
         }
@@ -367,7 +355,6 @@ public class MainScreen extends javax.swing.JFrame {
         int newX = (screenWidth - boardWidth) / 2;
         int newY = newTopBarHeight + (screenHeight - newTopBarHeight - boardHeight) / 2;
 
-        //getContentPane().add(play, new org.netbeans.lib.awtextra.AbsoluteConstraints(newX, newY, boardWidth, boardHeight));
         play.setBounds(newX, newY, boardWidth, boardHeight);
         
         topBarPanel.revalidate();
@@ -382,8 +369,11 @@ public class MainScreen extends javax.swing.JFrame {
         this.config = newConfig;
         this.hintCount = 3;
         this.shuffleCount = 3;
-        
-        resetCoinDisplay();
+        audioManager.stopBGM();
+        if (SoundLoad.isBgmOn) {
+            playMusicByLevel(); 
+        }
+        resetCoinDisplay(play.get_Totalcoin());
         resetScoreDisPlay();
         //xóa bảng hiện tại.
         if(play != null){
@@ -403,6 +393,14 @@ public class MainScreen extends javax.swing.JFrame {
             audioManager.stopBGM();
         }
     }
+    
+    public int getHintCount() {
+        return hintCount;
+    }
+
+    public int getShuffleCount() {
+        return shuffleCount;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -416,7 +414,7 @@ public class MainScreen extends javax.swing.JFrame {
 
         topBarPanel = new javax.swing.JPanel();
         coin = new javax.swing.JLabel();
-        PointLabel = new javax.swing.JLabel();
+        ScoreLabel = new javax.swing.JLabel();
         levelLabel = new javax.swing.JLabel();
         Timeline = new javax.swing.JSlider();
         settingmainButton = new javax.swing.JButton();
@@ -444,9 +442,9 @@ public class MainScreen extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(2, 24, 0, 0);
         topBarPanel.add(coin, gridBagConstraints);
 
-        PointLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        PointLabel.setText("ĐIỂM:");
-        PointLabel.setPreferredSize(new java.awt.Dimension(100, 30));
+        ScoreLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        ScoreLabel.setText("ĐIỂM:");
+        ScoreLabel.setPreferredSize(new java.awt.Dimension(100, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -454,7 +452,7 @@ public class MainScreen extends javax.swing.JFrame {
         gridBagConstraints.ipady = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(8, 24, 0, 0);
-        topBarPanel.add(PointLabel, gridBagConstraints);
+        topBarPanel.add(ScoreLabel, gridBagConstraints);
 
         levelLabel.setFont(new java.awt.Font("Segoe UI", 3, 24)); // NOI18N
         levelLabel.setForeground(new java.awt.Color(255, 0, 51));
@@ -575,6 +573,7 @@ public class MainScreen extends javax.swing.JFrame {
     private void settingmainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingmainButtonActionPerformed
         // TODO add your handling code here:
         //Pause Setting = new PauseScreen();
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
         play.stopTimer();
         PauseScreen pause = new PauseScreen(this, config, level, play);
         pause.setVisible(true);
@@ -584,8 +583,10 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void timeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeButtonActionPerformed
 //        // TODO add your handling code here:
-        play.addTimer(15);
-        System.out.println("cong them 15 giay");
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
+        play.BuyTime();
+        resetCoinDisplay(play.get_Totalcoin());
+        System.out.println("cong them 5 giay");
     }//GEN-LAST:event_timeButtonActionPerformed
 
     private void timeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_timeButtonMouseClicked
@@ -594,6 +595,7 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void hintButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hintButtonActionPerformed
         // TODO add your handling code here:
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
         if (this.hintCount >= 0) {
             this.hintCount--;
             play.findHint();
@@ -604,7 +606,7 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void swapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_swapButtonActionPerformed
         // TODO add your handling code here:
-        
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
         if (this.shuffleCount >= 0) {
             this.shuffleCount--;
             play.shuffle();
@@ -645,7 +647,7 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel PointLabel;
+    private javax.swing.JLabel ScoreLabel;
     private javax.swing.JSlider Timeline;
     private javax.swing.JLabel coin;
     private javax.swing.JButton hintButton;
@@ -657,11 +659,4 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JPanel topBarPanel;
     // End of variables declaration//GEN-END:variables
 
-    void playBGM() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    void resumeTimer() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }

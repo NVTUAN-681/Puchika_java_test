@@ -18,7 +18,7 @@ import java.awt.geom.RoundRectangle2D;
 public class SettingMenuScreen extends javax.swing.JFrame {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SettingMenuScreen.class.getName());
-
+    private SoundLoad audioManager = new SoundLoad();
     /**
      * Creates new form SettingMenuScreen
      */
@@ -68,7 +68,8 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         // 3. Đóng đinh tọa độ tuyệt đối: Cách mép trái 20px, mép trên 20px, kích thước 60x40
         exitButton6.setBounds(10, 10, 50, 30);
         
-        ImageLoad.loadBg("PAUSE_BTN", 2, 300, 60, 10);
+        ImageLoad.loadBg("PAUSE_BTN", 4, 280, 60, 10);
+        ImageLoad.loadBg("MINI_BTN", 4, 50, 30, 10);
         setupAllButtonIcons();
 
         //this.setMinimumSize(new java.awt.Dimension(300, 400));
@@ -85,7 +86,7 @@ public class SettingMenuScreen extends javax.swing.JFrame {
     private void setupAllButtonIcons() {
         // ---> 1. THUỐC ĐẶC TRỊ TẬT KÉO DÃN LỆCH CHỮ CỦA NETBEANS <---
         java.awt.GridBagLayout layout = (java.awt.GridBagLayout) getContentPane().getLayout();
-        javax.swing.AbstractButton[] btns = {soundButton, volumnButton, authorButton};
+        javax.swing.AbstractButton[] btns = {soundButton, volumnButton, authorButton, exitButton6};
 
         for (javax.swing.AbstractButton btn : btns) {
             java.awt.GridBagConstraints gbc = layout.getConstraints(btn);
@@ -95,38 +96,54 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         }
 
         //Button_Icon.applyCachedIcons(exitButton6, "CHƠI TIẾP", "PAUSE_BTN");
-        Button_Icon.applyCachedIcons(soundButton, "1", "PAUSE_BTN");
-        Button_Icon.applyCachedIcons(volumnButton, "2", "PAUSE_BTN");
+        Button_Icon.applyCachedIcons(soundButton, "", "PAUSE_BTN");
+        Button_Icon.applyCachedIcons(volumnButton, "", "PAUSE_BTN");
         Button_Icon.applyCachedIcons(authorButton, "NHÀ SẢN SUẤT", "PAUSE_BTN");
+        Button_Icon.applyCachedIcons(canncelButton, "XÓA DỮ LIỆU", "PAUSE_BTN");
+        //Button_Icon.applyCachedIcons(exitButton6, "<", "MINI_BTN");
+        
+        soundButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        volumnButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        
+        // --- BẮT ĐẦU: ĐỘ NÚT < THÀNH BO GÓC TRONG SUỐT ---
+        exitButton6.setContentAreaFilled(false);
+        exitButton6.setFocusPainted(false);
+        exitButton6.setBorderPainted(false);
+        exitButton6.setOpaque(false);
+        exitButton6.setForeground(java.awt.Color.WHITE); // Chữ màu trắng
+        exitButton6.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 18)); // Chữ to rõ
 
-        //exitButton6.setForeground(java.awt.Color.WHITE);
-        soundButton.setForeground(java.awt.Color.WHITE);
-        volumnButton.setForeground(java.awt.Color.WHITE);
-        authorButton.setForeground(java.awt.Color.WHITE);
-    }
-
-//    private void setupAllButtonIcons() {
-//        // ---> 1. THUỐC ĐẶC TRỊ TẬT KÉO DÃN LỆCH CHỮ CỦA NETBEANS <---
-//        java.awt.GridBagLayout layout = (java.awt.GridBagLayout) getContentPane().getLayout();
-//        javax.swing.AbstractButton[] btns = {soundButton, volumnButton, authorButton};
-//
-//        for (javax.swing.AbstractButton btn : btns) {
-//            java.awt.GridBagConstraints gbc = layout.getConstraints(btn);
-//            gbc.fill = java.awt.GridBagConstraints.NONE; // Cấm tiệt việc tự kéo dãn nút
-//            gbc.ipadx = 0; // Xóa sạch cái lề ảo 150px mà NetBeans tự nhét vào
-//            layout.setConstraints(btn, gbc);
-//        }
-//
-//        //Button_Icon.applyCachedIcons(exitButton6, "CHƠI TIẾP", "PAUSE_BTN");
-//        Button_Icon.applyCachedIcons(soundButton, "1", "PAUSE_BTN");
-//        Button_Icon.applyCachedIcons(volumnButton, "2", "PAUSE_BTN");
-//        Button_Icon.applyCachedIcons(authorButton, "NHÀ SẢN SUẤT", "PAUSE_BTN");
-//
-//        //exitButton6.setForeground(java.awt.Color.WHITE);
-//        soundButton.setForeground(java.awt.Color.WHITE);
-//        volumnButton.setForeground(java.awt.Color.WHITE);
-//        authorButton.setForeground(java.awt.Color.WHITE);
-//    }
+        // Ghi đè giao diện UI để tự vẽ hình bo góc
+        exitButton6.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(java.awt.Graphics g, javax.swing.JComponent c) {
+                java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
+                // Bật khử răng cưa cho góc bo mượt mà
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                javax.swing.AbstractButton b = (javax.swing.AbstractButton) c;
+                
+                // Hiệu ứng đổi màu nền khi di chuột / bấm
+                if (b.getModel().isPressed()) {
+                    g2.setColor(new java.awt.Color(255, 255, 255, 100)); // Trắng mờ khi bấm
+                } else if (b.getModel().isRollover()) {
+                    g2.setColor(new java.awt.Color(255, 255, 255, 50)); // Trắng rất mờ khi chuột lướt qua
+                } else {
+                    g2.setColor(new java.awt.Color(0, 0, 0, 150)); // Nền đen trong suốt lúc bình thường
+                }
+                
+                // Vẽ nền bo góc (Độ cong 20px)
+                g2.fillRoundRect(0, 0, c.getWidth(), c.getHeight(), 20, 20);
+                
+                // Vẽ thêm cái viền trắng mỏng cho sang trọng
+                g2.setColor(java.awt.Color.WHITE);
+                g2.setStroke(new java.awt.BasicStroke(1.5f));
+                g2.drawRoundRect(0, 0, c.getWidth() - 1, c.getHeight() - 1, 20, 20);
+                
+                g2.dispose();
+                super.paint(g, c); // Ra lệnh vẽ cái chữ "<" đè lên trên nền
+            }
+        });
+        }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -142,6 +159,7 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         soundButton = new javax.swing.JToggleButton();
         volumnButton = new javax.swing.JToggleButton();
         authorButton = new javax.swing.JButton();
+        canncelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -154,7 +172,7 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 27;
         gridBagConstraints.ipady = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
         getContentPane().add(exitButton6, gridBagConstraints);
 
@@ -168,7 +186,7 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 233;
         gridBagConstraints.ipady = 17;
-        gridBagConstraints.insets = new java.awt.Insets(275, 40, 0, 40);
+        gridBagConstraints.insets = new java.awt.Insets(275, 50, 0, 60);
         getContentPane().add(soundButton, gridBagConstraints);
 
         volumnButton.setFont(new java.awt.Font("Segoe UI Emoji", 0, 14)); // NOI18N
@@ -182,10 +200,11 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 233;
         gridBagConstraints.ipady = 17;
-        gridBagConstraints.insets = new java.awt.Insets(10, 40, 0, 40);
+        gridBagConstraints.insets = new java.awt.Insets(6, 50, 0, 60);
         getContentPane().add(volumnButton, gridBagConstraints);
 
         authorButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        authorButton.setForeground(new java.awt.Color(0, 0, 255));
         authorButton.setText("ĐỘI NGŨ SẢN XUẤT");
         authorButton.setPreferredSize(new java.awt.Dimension(250, 40));
         authorButton.addActionListener(this::authorButtonActionPerformed);
@@ -195,8 +214,22 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 112;
         gridBagConstraints.ipady = 17;
-        gridBagConstraints.insets = new java.awt.Insets(6, 40, 199, 40);
+        gridBagConstraints.insets = new java.awt.Insets(6, 50, 0, 60);
         getContentPane().add(authorButton, gridBagConstraints);
+
+        canncelButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        canncelButton.setForeground(new java.awt.Color(51, 51, 255));
+        canncelButton.setText("XÓA DỮ LIỆU");
+        canncelButton.setPreferredSize(new java.awt.Dimension(250, 40));
+        canncelButton.addActionListener(this::canncelButtonActionPerformed);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.ipadx = 137;
+        gridBagConstraints.ipady = 13;
+        gridBagConstraints.insets = new java.awt.Insets(6, 50, 153, 60);
+        getContentPane().add(canncelButton, gridBagConstraints);
 
         setSize(new java.awt.Dimension(464, 658));
         setLocationRelativeTo(null);
@@ -204,6 +237,8 @@ public class SettingMenuScreen extends javax.swing.JFrame {
 
     private void exitButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButton6ActionPerformed
         // TODO add your handling code here:
+       audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
+        
         start.setVisible(true);
         this.dispose();
 
@@ -211,12 +246,13 @@ public class SettingMenuScreen extends javax.swing.JFrame {
 // này là tiếng thao tác nhé, như kiểu chọn hay ăn á
     private void soundButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_soundButtonActionPerformed
         // TODO add your handling code here:
-        if (soundButton.isSelected()) {
+       if (soundButton.isSelected()) {
             soundButton.setText("🔇");
-//            SoundLoad.isSfxOn = false; // Tắt SFX
+            SoundLoad.isSfxOn = false; // TẮT tiếng thao tác
         } else {
             soundButton.setText("🔊");
-//            SoundLoad.isSfxOn = true;
+            SoundLoad.isSfxOn = true;  // BẬT tiếng thao tác
+            audioManager.playSoundEffect("/sound/SoundTap/tap.wav"); // Phát thử 1 tiếng click cho người dùng biết
         }
     }//GEN-LAST:event_soundButtonActionPerformed
 
@@ -224,19 +260,24 @@ public class SettingMenuScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
         if (volumnButton.isSelected()) {
             volumnButton.setText("🚫");
-//            SoundLoad.isBgmOn = false;
-//            SoundLoad.stopBGM();
+            SoundLoad.isBgmOn = false; // TẮT trạng thái nhạc nền
+            audioManager.stopBGM();    // Dừng nhạc nền đang chạy ngay lập tức
         } else {
             volumnButton.setText("🎧");
-//            SoundLoad.isBgmOn = true;
-//            //nhạc nền game nhé
-//            SoundLoad.playBGM("");
+            SoundLoad.isBgmOn = true;  // BẬT trạng thái nhạc nền
+            audioManager.playBGM("/sound/SoundBackground/SoundStart.wav"); // Phát lại nhạc nền của StartScreen
         }
     }//GEN-LAST:event_volumnButtonActionPerformed
 
     private void authorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_authorButtonActionPerformed
         // TODO add your handling code here:
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
     }//GEN-LAST:event_authorButtonActionPerformed
+
+    private void canncelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_canncelButtonActionPerformed
+        // TODO add your handling code here:
+        audioManager.playSoundEffect("/sound/SoundTap/tap.wav");
+    }//GEN-LAST:event_canncelButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -283,6 +324,7 @@ public class SettingMenuScreen extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton authorButton;
+    private javax.swing.JButton canncelButton;
     private javax.swing.JButton exitButton6;
     private javax.swing.JToggleButton soundButton;
     private javax.swing.JToggleButton volumnButton;
