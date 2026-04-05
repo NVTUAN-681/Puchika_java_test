@@ -31,6 +31,15 @@ public class StartScreen extends javax.swing.JFrame {
     
     private SoundLoad audioManager = new SoundLoad();
     
+    public StartScreen() {
+    // Tự tạo các tham số mặc định và "đẩy" vào Constructor chính bên dưới
+        this(
+            new GameConfig(LevelType.START.getLevel()), // config mặc định
+            LevelType.START,                            // level mặc định
+            null                                        // play mặc định (chưa vào ván)
+        );
+    }
+    
     public StartScreen(GameConfig config, LevelType level, PlayScreen play) {
         setContentPane(new BackgroundStartScreen());
         initComponents();
