@@ -88,7 +88,7 @@ public class StartScreen extends javax.swing.JFrame {
         exitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("PIKACHU ADVENTURE");
+        setTitle("PIKACHU'S ADVENTURE");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         playButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
