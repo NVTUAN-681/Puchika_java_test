@@ -76,15 +76,15 @@ public class PlayScreen extends JPanel implements ActionListener {
 
 //thiết lập thuật toán và cố định level;
         switch (config.GetLevel()) {
-            case "AFRICA" -> {
+            case "AFRICAN" -> {
                 ImageLoad.isAsianMode = false; // === [THÊM MỚI] Tắt cờ ===
-                this.level = LevelType.AFRICA;
+                this.level = LevelType.AFRICAN;
                 this.algorithm = new ClassicAlgorithm();
                 isDark = true;
             }
-            case "EUROPE" -> {
+            case "EUROPEAN" -> {
                 ImageLoad.isAsianMode = false; // === [THÊM MỚI] Tắt cờ ===
-                this.level = LevelType.EUROPE;
+                this.level = LevelType.EUROPEAN;
                 this.algorithm = new ClassicAlgorithm();
                 isDark = true;
             }

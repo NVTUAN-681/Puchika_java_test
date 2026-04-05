@@ -28,19 +28,19 @@ public class LevelType {
     }
 
     public static final LevelType START = new LevelType("Start", 3, 6, 20, 10, false, false);
-    public static final LevelType AFRICA = new LevelType("AFRICA", 8, 12, 300, 18, true, true);
-    public static final LevelType EUROPE = new LevelType("EUROPE", 10, 14, 240, 36, true, true);
+    public static final LevelType AFRICAN = new LevelType("AFRICAN", 8, 12, 300, 18, true, true);
+    public static final LevelType EUROPEAN = new LevelType("EUROPEAN", 10, 14, 240, 36, true, true);
     public static final LevelType ASIAN = new LevelType("ASIAN", 10, 20, 180, 45, true, false);
-    public static final LevelType EASY = new LevelType("EASY", 8, 10, 240, 36, true, false);
-    public static final LevelType NORMAL = new LevelType("NORMAL", 10, 12, 240, 72, false, false);
+    public static final LevelType EASY = new LevelType("EASY", 6, 10, 240, 18, false, false);
+    public static final LevelType NORMAL = new LevelType("NORMAL", 8, 12, 240, 36, true, false);
     public static final LevelType HARD = new LevelType("HARD", 10, 20, 180, 91, true, false);
 
     public static LevelType getByName(String levelName){
         switch (levelName.trim().toUpperCase()) {
-            case "AFRICA":
-                return AFRICA;
-            case "EUROPE":
-                return EUROPE;
+            case "AFRICAN":
+                return AFRICAN;
+            case "EUROPEAN":
+                return EUROPEAN;
             case "ASIAN":
                 return ASIAN;
             case "EASY":
@@ -80,7 +80,5 @@ public class LevelType {
 
     public boolean isIsRocket() {
         return isRocket;
-    }
-    
-    
+    } 
 }
